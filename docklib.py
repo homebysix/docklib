@@ -1,12 +1,15 @@
+#!/usr/bin/python
 '''Routines for manipulating the Dock'''
 
 import os
 import subprocess
 
+# pylint: disable=E0611
 from Foundation import NSURL
 from Foundation import CFPreferencesAppSynchronize
 from Foundation import CFPreferencesCopyAppValue
 from Foundation import CFPreferencesSetAppValue
+# pylint: enable=E0611
 
 class DockError(Exception):
     '''Basic exception'''
