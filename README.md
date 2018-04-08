@@ -12,8 +12,7 @@ Place the docklib.py file in your Python path so its contents can be imported in
 
 Add Microsoft Word to the right side of the Dock:
 
-```
-#!/usr/bin/python
+```python
 from docklib import Dock
 dock = Dock()
 item = dock.makeDockAppEntry('/Applications/Microsoft Word.app')
@@ -23,8 +22,7 @@ dock.save()
 
 Add Microsoft Word to the left side of the Dock:
 
-```
-#!/usr/bin/python
+```python
 from docklib import Dock
 dock = Dock()
 item = dock.makeDockAppEntry('/Applications/Microsoft Word.app')
@@ -34,8 +32,7 @@ dock.save()
 
 Replace Mail.app with Outlook in the Dock:
 
-```
-#!/usr/bin/python
+```python
 from docklib import Dock
 dock = Dock()
 item = dock.replaceDockEntry('/Applications/Microsoft Outlook.app', 'Mail')
@@ -44,8 +41,7 @@ dock.save()
 
 Remove Calendar from the Dock:
 
-```
-#!/usr/bin/python
+```python
 from docklib import Dock
 dock = Dock()
 item = dock.removeDockEntry('Calendar')
@@ -56,8 +52,7 @@ Display the Documents folder as a stack to the right of the Dock divider, sorted
 
 (Note that this checks for the existence of the Documents item and only adds it if it's not already present.)
 
-```
-#!/usr/bin/python
+```python
 import os
 from docklib import Dock
 dock = Dock()
@@ -72,8 +67,7 @@ if dock.findExistingLabel('Documents', section='persistent-others') == -1:
 
 Specify a custom Dock for the local IT technician account:
 
-```
-#!/usr/bin/python
+```python
 import os
 from docklib import Dock
 tech_dock = [
