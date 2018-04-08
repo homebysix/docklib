@@ -10,7 +10,7 @@ Place the docklib.py file in your Python path so its contents can be imported in
 
 ## Examples
 
-Add Microsoft Word to the right side of the Dock:
+### Add Microsoft Word to the right side of the Dock
 
 ```python
 from docklib import Dock
@@ -20,7 +20,7 @@ dock.items['persistent-apps'].append(item)
 dock.save()
 ```
 
-Add Microsoft Word to the left side of the Dock:
+### Add Microsoft Word to the left side of the Dock
 
 ```python
 from docklib import Dock
@@ -30,7 +30,7 @@ dock.items['persistent-apps'] = [item] + dock.items['persistent-apps']
 dock.save()
 ```
 
-Replace Mail.app with Outlook in the Dock:
+### Replace Mail.app with Outlook in the Dock
 
 ```python
 from docklib import Dock
@@ -39,7 +39,7 @@ item = dock.replaceDockEntry('/Applications/Microsoft Outlook.app', 'Mail')
 dock.save()
 ```
 
-Remove Calendar from the Dock:
+### Remove Calendar from the Dock
 
 ```python
 from docklib import Dock
@@ -48,9 +48,9 @@ item = dock.removeDockEntry('Calendar')
 dock.save()
 ```
 
-Display the Documents folder as a stack to the right of the Dock divider, sorted by modification date, that expands into a fan when clicked:
+### Add the Documents folder to the right side of the Dock
 
-(Note that this checks for the existence of the Documents item and only adds it if it's not already present.)
+Displays as a stack to the right of the Dock divider, sorted by modification date, that expands into a fan when clicked. This example checks for the existence of the Documents item and only adds it if it's not already present.
 
 ```python
 import os
@@ -65,7 +65,7 @@ if dock.findExistingLabel('Documents', section='persistent-others') == -1:
     dock.save()
 ```
 
-Specify a custom Dock for the local IT technician account:
+### Specify a custom Dock for the local IT technician account
 
 ```python
 import os
