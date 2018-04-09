@@ -11,15 +11,16 @@ from Foundation import CFPreferencesCopyAppValue
 from Foundation import CFPreferencesSetAppValue
 # pylint: enable=E0611
 
+
 class DockError(Exception):
     '''Basic exception'''
     pass
 
+
 class Dock():
     '''Class to handle Dock operations'''
     _DOMAIN = 'com.apple.dock'
-    _DOCK_PLIST = os.path.expanduser(
-        '~/Library/Preferences/com.apple.dock.plist')
+    _DOCK_PLIST = os.path.expanduser('~/Library/Preferences/com.apple.dock.plist')
     _DOCK_LAUNCHAGENT_ID = 'com.apple.Dock.agent'
     _DOCK_LAUNCHAGENT_FILE = '/System/Library/LaunchAgents/com.apple.Dock.plist'
     _SECTIONS = ['persistent-apps', 'persistent-others']
@@ -49,7 +50,9 @@ class Dock():
 
         for key in self._SECTIONS:
             try:
-                CFPreferencesSetAppValue(key, self.items[key], self._DOMAIN)
+                CFPreferencesSetAppValue(key,
+                                         self.items[key],
+                                         self._DOMAIN)
             except Exception:
                 raise DockError
         for key in self._MUTABLE_KEYS:
@@ -71,8 +74,7 @@ class Dock():
         '''returns index of item with label matching test_label
             or -1 if not found'''
         for index in range(len(self.items[section])):
-            if (self.items[section][index]['tile-data'].get('file-label') ==
-                test_label):
+            if (self.items[section][index]['tile-data'].get('file-label') == test_label):
                 return index
         return -1
 
@@ -103,9 +105,9 @@ class Dock():
                 self.items[section][found_index] = new_item
 
     def makeDockAppSpacer(self):
+        '''Makes an empty space in the Dock.'''
         return {'tile-data': {},
                 'tile-type': 'spacer-tile'}
-
 
     def makeDockAppEntry(self, thePath):
         '''returns a dictionary corresponding to a Dock application item'''
@@ -117,25 +119,23 @@ class Dock():
                               'file-type': 41},
                 'tile-type': 'file-tile'}
 
-    def makeDockOtherEntry(self, thePath,
-                           arrangement=0, displayas=1, showas=0):
-        '''returns a dictionary corresponding to a Dock folder or file item'''
-        # arrangement values:
-        #     1: sort by name
-        #     2: sort by date added
-        #     3: sort by modification date
-        #     4: sort by creation date
-        #     5: sort by kind
-        #
-        # displayas values:
-        #     0: display as stack
-        #     1: display as folder
-        #
-        # showas values:
-        #     0: auto
-        #     1: fan
-        #     2: grid
-        #     3: list
+    def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1, showas=0):
+        '''Returns a dictionary corresponding to a Dock folder or file item.
+        arrangement values:
+            1: sort by name
+            2: sort by date added
+            3: sort by modification date
+            4: sort by creation date
+            5: sort by kind
+        displayas values:
+            0: display as stack
+            1: display as folder
+        showas values:
+            0: auto
+            1: fan
+            2: grid
+            3: list
+        '''
 
         label_name = os.path.splitext(os.path.basename(thePath))[0]
         if arrangement == 0:
@@ -147,18 +147,18 @@ class Dock():
                 arrangement = 1
         ns_url = NSURL.fileURLWithPath_(thePath).absoluteString()
         if os.path.isdir(thePath):
-            return {'tile-data':{'arrangement': arrangement,
-                                 'displayas': displayas,
-                                 'file-data':{'_CFURLString': ns_url,
-                                              '_CFURLStringType': 15},
-                                 'file-label': label_name,
-                                 'dock-extra': False,
-                                 'showas': showas
-                                 },
-                    'tile-type':'directory-tile'}
+            return {'tile-data': {'arrangement': arrangement,
+                                  'displayas': displayas,
+                                  'file-data': {'_CFURLString': ns_url,
+                                                '_CFURLStringType': 15},
+                                  'file-label': label_name,
+                                  'dock-extra': False,
+                                  'showas': showas
+                                  },
+                    'tile-type': 'directory-tile'}
         else:
-            return {'tile-data':{'file-data':{'_CFURLString': ns_url,
-                                              '_CFURLStringType': 15},
-                                 'file-label': label_name,
-                                 'dock-extra': False},
-                    'tile-type':'file-tile'}
+            return {'tile-data': {'file-data': {'_CFURLString': ns_url,
+                                                '_CFURLStringType': 15},
+                                  'file-label': label_name,
+                                  'dock-extra': False},
+                    'tile-type': 'file-tile'}
