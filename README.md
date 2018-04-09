@@ -48,6 +48,24 @@ item = dock.removeDockEntry('Calendar')
 dock.save()
 ```
 
+### Display the current orientation of the Dock
+
+```python
+from docklib import Dock
+dock = Dock()
+print dock.orientation
+```
+
+### Make the Dock display on the left, and enable autohide
+
+```python
+from docklib import Dock
+dock = Dock()
+dock.orientation = 'left'
+dock.autohide = True
+dock.save()
+```
+
 ### Add the Documents folder to the right side of the Dock
 
 Displays as a stack to the right of the Dock divider, sorted by modification date, that expands into a fan when clicked. This example checks for the existence of the Documents item and only adds it if it's not already present.
