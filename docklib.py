@@ -23,6 +23,8 @@ class Dock():
     _DOCK_LAUNCHAGENT_ID = 'com.apple.Dock.agent'
     _DOCK_LAUNCHAGENT_FILE = '/System/Library/LaunchAgents/com.apple.Dock.plist'
     _SECTIONS = ['persistent-apps', 'persistent-others']
+    _MUTABLE_KEYS = ['autohide', 'orientation', 'tilesize']
+    _IMMUTABLE_KEYS = ['mod-count']
     items = {}
 
     def __init__(self):
@@ -30,6 +32,12 @@ class Dock():
             try:
                 section = CFPreferencesCopyAppValue(key, self._DOMAIN)
                 self.items[key] = section.mutableCopy()
+            except Exception:
+                raise
+        for key in self._MUTABLE_KEYS + self._IMMUTABLE_KEYS:
+            try:
+                value = CFPreferencesCopyAppValue(key, self._DOMAIN)
+                setattr(self, key.replace('-', '_'), value)
             except Exception:
                 raise
 
@@ -44,6 +52,14 @@ class Dock():
                 CFPreferencesSetAppValue(key, self.items[key], self._DOMAIN)
             except Exception:
                 raise DockError
+        for key in self._MUTABLE_KEYS:
+            if getattr(self, key):
+                try:
+                    CFPreferencesSetAppValue(key.replace('_', '-'),
+                                             getattr(self, key),
+                                             self._DOMAIN)
+                except Exception:
+                    raise DockError
         if not CFPreferencesAppSynchronize(self._DOMAIN):
             raise DockError
 
