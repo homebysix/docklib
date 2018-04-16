@@ -107,7 +107,7 @@ class Dock():
     def makeDockAppSpacer(self, type='spacer-tile'):
         '''Makes an empty space in the Dock.'''
         if type not in ['spacer-tile', 'small-spacer-tile']:
-            raise ValueError("makeDockAppSpacer type is invalid.")
+            raise ValueError("{0}: invalid makeDockAppSpacer type.")
         return {'tile-data': {},
                 'tile-type': type}
 
