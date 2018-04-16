@@ -104,10 +104,13 @@ class Dock():
             if found_index > -1:
                 self.items[section][found_index] = new_item
 
-    def makeDockAppSpacer(self):
+    def makeDockAppSpacer(self, type='spacer-tile'):
         '''Makes an empty space in the Dock.'''
+        if type not in ['spacer-tile', 'small-spacer-tile']:
+            msg = "{0}: invalid makeDockAppSpacer type.".format(type)
+            raise ValueError(msg)
         return {'tile-data': {},
-                'tile-type': 'spacer-tile'}
+                'tile-type': type}
 
     def makeDockAppEntry(self, thePath):
         '''returns a dictionary corresponding to a Dock application item'''
