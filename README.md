@@ -35,7 +35,7 @@ dock.save()
 ```python
 from docklib import Dock
 dock = Dock()
-item = dock.replaceDockEntry('/Applications/Microsoft Outlook.app', 'Mail')
+dock.replaceDockEntry('/Applications/Microsoft Outlook.app', 'Mail')
 dock.save()
 ```
 
@@ -44,7 +44,7 @@ dock.save()
 ```python
 from docklib import Dock
 dock = Dock()
-item = dock.removeDockEntry('Calendar')
+dock.removeDockEntry('Calendar')
 dock.save()
 ```
 
