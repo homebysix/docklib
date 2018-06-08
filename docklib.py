@@ -112,9 +112,10 @@ class Dock():
         return {'tile-data': {},
                 'tile-type': type}
 
-    def makeDockAppEntry(self, thePath):
+    def makeDockAppEntry(self, thePath, label_name=None):
         '''returns a dictionary corresponding to a Dock application item'''
-        label_name = os.path.splitext(os.path.basename(thePath))[0]
+        if not label_name:
+            label_name = os.path.splitext(os.path.basename(thePath))[0]
         ns_url = NSURL.fileURLWithPath_(thePath).absoluteString()
         return {'tile-data': {'file-data': {'_CFURLString': ns_url,
                                             '_CFURLStringType': 15},
