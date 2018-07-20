@@ -103,7 +103,7 @@ dock = Dock()
 dock.items['persistent-apps'] = []
 for item in tech_dock:
     if os.path.exists(item):
-        item = dock.makeDockAppEntry(entry)
+        item = dock.makeDockAppEntry(item)
         dock.items['persistent-apps'].append(item)
 dock.save()
 ```
