@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# pylint: disable=C0103
+
 '''Routines for manipulating the Dock'''
 
 import os
@@ -70,13 +72,16 @@ class Dock():
         subprocess.call(['/bin/launchctl', 'load', self._DOCK_LAUNCHAGENT_FILE])
         subprocess.call(['/bin/launchctl', 'start', self._DOCK_LAUNCHAGENT_ID])
 
+
     def findExistingLabel(self, test_label, section='persistent-apps'):
         '''returns index of item with label matching test_label
             or -1 if not found'''
         for index in range(len(self.items[section])):
             if (self.items[section][index]['tile-data'].get('file-label') == test_label):
                 return index
+
         return -1
+
 
     def removeDockEntry(self, label, section=None):
         '''Removes a Dock entry with matching label, if any'''
@@ -88,6 +93,7 @@ class Dock():
             found_index = self.findExistingLabel(label, section=section)
             if found_index > -1:
                 del self.items[section][found_index]
+
 
     def replaceDockEntry(self, thePath, label=None, section='persistent-apps'):
         '''Replaces a Dock entry. If label is None, then a label is derived
@@ -104,19 +110,26 @@ class Dock():
             if found_index > -1:
                 self.items[section][found_index] = new_item
 
+
     def makeDockAppSpacer(self, type='spacer-tile'):
         '''Makes an empty space in the Dock.'''
         if type not in ['spacer-tile', 'small-spacer-tile']:
             msg = "{0}: invalid makeDockAppSpacer type.".format(type)
             raise ValueError(msg)
-        return {'tile-data': {}, 'tile-type': type}
+        result = {
+            'tile-data': {},
+            'tile-type': type
+        }
+
+        return result
+
 
     def makeDockAppEntry(self, thePath, label_name=None):
         '''returns a dictionary corresponding to a Dock application item'''
         if not label_name:
             label_name = os.path.splitext(os.path.basename(thePath))[0]
         ns_url = NSURL.fileURLWithPath_(thePath).absoluteString()
-        return {
+        result = {
             'tile-data': {
                 'file-data': {
                     '_CFURLString': ns_url,
@@ -127,6 +140,9 @@ class Dock():
             },
             'tile-type': 'file-tile'
         }
+
+        return result
+
 
     def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1,
                            showas=0):
@@ -157,7 +173,7 @@ class Dock():
                 arrangement = 1
         ns_url = NSURL.fileURLWithPath_(thePath).absoluteString()
         if os.path.isdir(thePath):
-            return {
+            result = {
                 'tile-data': {
                     'arrangement': arrangement,
                     'displayas': displayas,
@@ -172,7 +188,7 @@ class Dock():
                 'tile-type': 'directory-tile'
             }
         else:
-            return {
+            result = {
                 'tile-data': {
                     'file-data': {
                         '_CFURLString': ns_url,
@@ -184,16 +200,17 @@ class Dock():
                 'tile-type': 'file-tile'
             }
 
+        return result
+
+
     def makeDockOtherURLEntry(self, theURL, label=None):
-        '''
-        Returns a dictionary corresponding to a URL.
-        '''
+        '''Returns a dictionary corresponding to a URL.'''
         if label is None:
             label_name = str(theURL)
         else:
             label_name = label
         ns_url = NSURL.URLWithString_(theURL).absoluteString()
-        return {
+        result = {
             'tile-data': {
                 "label": label_name,
                 "url": {
@@ -203,3 +220,5 @@ class Dock():
             },
             'tile-type': "url-tile"
         }
+
+        return result
