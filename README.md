@@ -82,6 +82,20 @@ if dock.findExistingLabel('Documents', section='persistent-others') == -1:
     dock.items['persistent-others'] = [item] + dock.items['persistent-others']
     dock.save()
 ```
+### Add a URL to the right side of the Dock
+
+Displays as a globe to the right of the Dock divider, that launches a URL in the default browser when clicked. This example checks for the existence of the Documents item and only adds it if it's not already present.
+
+```python
+import os
+from docklib import Dock
+dock = Dock()
+if dock.findExistingLabel('GitHub', section='persistent-others') == -1:
+    item = dock.makeDockOtherURLEntry("https://www.github.com/",
+                                   label="GitHub")
+    dock.items['persistent-others'] = [item] + dock.items['persistent-others']
+    dock.save()
+```
 
 ### Specify a custom Dock for the local IT technician account
 
