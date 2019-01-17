@@ -8,6 +8,8 @@ Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c9361
 
 Place the docklib.py file in your Python path so its contents can be imported into scripts you create. Or, include the file in the same directory as your script.
 
+The packages available in the [Releases](https://github.com/homebysix/docklib/releases) section will place the docklib.py file into /Library/Python/2.7/site-packages.
+
 ## Examples
 
 ### Add Microsoft Word to the right side of the Dock
@@ -92,7 +94,7 @@ from docklib import Dock
 dock = Dock()
 if dock.findExistingLabel('GitHub', section='persistent-others') == -1:
     item = dock.makeDockOtherURLEntry("https://www.github.com/",
-                                   label="GitHub")
+                                      label="GitHub")
     dock.items['persistent-others'] = [item] + dock.items['persistent-others']
     dock.save()
 ```
