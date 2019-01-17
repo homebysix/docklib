@@ -109,21 +109,27 @@ class Dock():
         if type not in ['spacer-tile', 'small-spacer-tile']:
             msg = "{0}: invalid makeDockAppSpacer type.".format(type)
             raise ValueError(msg)
-        return {'tile-data': {},
-                'tile-type': type}
+        return {'tile-data': {}, 'tile-type': type}
 
     def makeDockAppEntry(self, thePath, label_name=None):
         '''returns a dictionary corresponding to a Dock application item'''
         if not label_name:
             label_name = os.path.splitext(os.path.basename(thePath))[0]
         ns_url = NSURL.fileURLWithPath_(thePath).absoluteString()
-        return {'tile-data': {'file-data': {'_CFURLString': ns_url,
-                                            '_CFURLStringType': 15},
-                              'file-label': label_name,
-                              'file-type': 41},
-                'tile-type': 'file-tile'}
+        return {
+            'tile-data': {
+                'file-data': {
+                    '_CFURLString': ns_url,
+                    '_CFURLStringType': 15
+                },
+                'file-label': label_name,
+                'file-type': 41
+            },
+            'tile-type': 'file-tile'
+        }
 
-    def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1, showas=0):
+    def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1,
+                           showas=0):
         '''Returns a dictionary corresponding to a Dock folder or file item.
         arrangement values:
             1: sort by name
@@ -151,18 +157,49 @@ class Dock():
                 arrangement = 1
         ns_url = NSURL.fileURLWithPath_(thePath).absoluteString()
         if os.path.isdir(thePath):
-            return {'tile-data': {'arrangement': arrangement,
-                                  'displayas': displayas,
-                                  'file-data': {'_CFURLString': ns_url,
-                                                '_CFURLStringType': 15},
-                                  'file-label': label_name,
-                                  'dock-extra': False,
-                                  'showas': showas
-                                  },
-                    'tile-type': 'directory-tile'}
+            return {
+                'tile-data': {
+                    'arrangement': arrangement,
+                    'displayas': displayas,
+                    'file-data': {
+                        '_CFURLString': ns_url,
+                        '_CFURLStringType': 15
+                    },
+                    'file-label': label_name,
+                    'dock-extra': False,
+                    'showas': showas
+                },
+                'tile-type': 'directory-tile'
+            }
         else:
-            return {'tile-data': {'file-data': {'_CFURLString': ns_url,
-                                                '_CFURLStringType': 15},
-                                  'file-label': label_name,
-                                  'dock-extra': False},
-                    'tile-type': 'file-tile'}
+            return {
+                'tile-data': {
+                    'file-data': {
+                        '_CFURLString': ns_url,
+                        '_CFURLStringType': 15
+                    },
+                    'file-label': label_name,
+                    'dock-extra': False
+                },
+                'tile-type': 'file-tile'
+            }
+
+    def makeDockOtherURLEntry(self, theURL, label=None):
+        '''
+        Returns a dictionary corresponding to a URL.
+        '''
+        if label is None:
+            label_name = str(theURL)
+        else:
+            label_name = label
+        ns_url = NSURL.URLWithString_(theURL).absoluteString()
+        return {
+            'tile-data': {
+                "label": label_name,
+                "url": {
+                    "_CFURLString": ns_url,
+                    "_CFURLStringType": 15
+                }
+            },
+            'tile-type': "url-tile"
+        }
