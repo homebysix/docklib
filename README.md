@@ -2,7 +2,7 @@
 
 This is a Python module intended to assist IT administrators with manipulation of the macOS Dock.
 
-Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c93615341a21009f800222e) by @gregneagle and [modified](https://gist.github.com/discentem/448b3f99b98ebabdcb56a55c40076449) to include support for spacers by @discentem.
+Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c93615341a21009f800222e) by @gregneagle, this fork has been modified to include support for some additional Dock features.
 
 ## Installation
 
