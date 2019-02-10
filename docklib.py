@@ -26,7 +26,7 @@ class Dock():
     _DOCK_LAUNCHAGENT_ID = 'com.apple.Dock.agent'
     _DOCK_LAUNCHAGENT_FILE = '/System/Library/LaunchAgents/com.apple.Dock.plist'
     _SECTIONS = ['persistent-apps', 'persistent-others']
-    _MUTABLE_KEYS = ['autohide', 'orientation', 'tilesize']
+    _MUTABLE_KEYS = ['autohide', 'orientation', 'show-recents', 'tilesize']
     _IMMUTABLE_KEYS = ['mod-count']
     items = {}
 
@@ -77,7 +77,7 @@ class Dock():
         '''returns index of item with label matching test_label
             or -1 if not found'''
         for index in range(len(self.items[section])):
-            if (self.items[section][index]['tile-data'].get('file-label') == test_label):
+            if self.items[section][index]['tile-data'].get('file-label') == test_label:
                 return index
 
         return -1
@@ -89,10 +89,10 @@ class Dock():
             sections = [section]
         else:
             sections = self._SECTIONS
-        for section in sections:
-            found_index = self.findExistingLabel(label, section=section)
+        for sect in sections:
+            found_index = self.findExistingLabel(label, section=sect)
             if found_index > -1:
-                del self.items[section][found_index]
+                del self.items[sect][found_index]
 
 
     def replaceDockEntry(self, thePath, label=None, section='persistent-apps'):
@@ -144,8 +144,7 @@ class Dock():
         return result
 
 
-    def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1,
-                           showas=0):
+    def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1, showas=0):
         '''Returns a dictionary corresponding to a Dock folder or file item.
         arrangement values:
             1: sort by name
