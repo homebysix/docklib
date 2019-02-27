@@ -16,9 +16,10 @@ The packages available in the [Releases](https://github.com/homebysix/docklib/re
 
 ```python
 from docklib import Dock
+
 dock = Dock()
-item = dock.makeDockAppEntry('/Applications/Microsoft Word.app')
-dock.items['persistent-apps'].append(item)
+item = dock.makeDockAppEntry("/Applications/Microsoft Word.app")
+dock.items["persistent-apps"].append(item)
 dock.save()
 ```
 
@@ -26,9 +27,10 @@ dock.save()
 
 ```python
 from docklib import Dock
+
 dock = Dock()
-item = dock.makeDockAppEntry('/Applications/Microsoft Word.app')
-dock.items['persistent-apps'] = [item] + dock.items['persistent-apps']
+item = dock.makeDockAppEntry("/Applications/Microsoft Word.app")
+dock.items["persistent-apps"] = [item] + dock.items["persistent-apps"]
 dock.save()
 ```
 
@@ -36,8 +38,9 @@ dock.save()
 
 ```python
 from docklib import Dock
+
 dock = Dock()
-dock.replaceDockEntry('/Applications/Microsoft Outlook.app', 'Mail')
+dock.replaceDockEntry("/Applications/Microsoft Outlook.app", "Mail")
 dock.save()
 ```
 
@@ -45,8 +48,9 @@ dock.save()
 
 ```python
 from docklib import Dock
+
 dock = Dock()
-dock.removeDockEntry('Calendar')
+dock.removeDockEntry("Calendar")
 dock.save()
 ```
 
@@ -54,6 +58,7 @@ dock.save()
 
 ```python
 from docklib import Dock
+
 dock = Dock()
 print dock.orientation
 ```
@@ -62,8 +67,9 @@ print dock.orientation
 
 ```python
 from docklib import Dock
+
 dock = Dock()
-dock.orientation = 'left'
+dock.orientation = "left"
 dock.autohide = True
 dock.save()
 ```
@@ -75,13 +81,13 @@ Displays as a stack to the right of the Dock divider, sorted by modification dat
 ```python
 import os
 from docklib import Dock
+
 dock = Dock()
-if dock.findExistingLabel('Documents', section='persistent-others') == -1:
-    item = dock.makeDockOtherEntry(os.path.expanduser('~/Documents'),
-                                   arrangement=3,
-                                   displayas=1,
-                                   showas=1)
-    dock.items['persistent-others'] = [item] + dock.items['persistent-others']
+if dock.findExistingLabel("Documents", section="persistent-others") == -1:
+    item = dock.makeDockOtherEntry(
+        os.path.expanduser("~/Documents"), arrangement=3, displayas=1, showas=1
+    )
+    dock.items["persistent-others"] = [item] + dock.items["persistent-others"]
     dock.save()
 ```
 ### Add a URL to the right side of the Dock
@@ -91,11 +97,11 @@ Displays as a globe to the right of the Dock divider, that launches a URL in the
 ```python
 import os
 from docklib import Dock
+
 dock = Dock()
-if dock.findExistingLabel('GitHub', section='persistent-others') == -1:
-    item = dock.makeDockOtherURLEntry("https://www.github.com/",
-                                      label="GitHub")
-    dock.items['persistent-others'] = [item] + dock.items['persistent-others']
+if dock.findExistingLabel("GitHub", section="persistent-others") == -1:
+    item = dock.makeDockOtherURLEntry("https://www.github.com/", label="GitHub")
+    dock.items["persistent-others"] = [item] + dock.items["persistent-others"]
     dock.save()
 ```
 
@@ -104,22 +110,23 @@ if dock.findExistingLabel('GitHub', section='persistent-others') == -1:
 ```python
 import os
 from docklib import Dock
+
 tech_dock = [
-    '/Applications/Google Chrome.app',
-    '/Applications/App Store.app',
-    '/Applications/Managed Software Center.app',
-    '/Applications/System Preferences.app',
-    '/Applications/Utilities/Activity Monitor.app',
-    '/Applications/Utilities/Console.app',
-    '/Applications/Utilities/Disk Utility.app',
-    '/Applications/Utilities/Migration Assistant.app',
-    '/Applications/Utilities/Terminal.app',
+    "/Applications/Google Chrome.app",
+    "/Applications/App Store.app",
+    "/Applications/Managed Software Center.app",
+    "/Applications/System Preferences.app",
+    "/Applications/Utilities/Activity Monitor.app",
+    "/Applications/Utilities/Console.app",
+    "/Applications/Utilities/Disk Utility.app",
+    "/Applications/Utilities/Migration Assistant.app",
+    "/Applications/Utilities/Terminal.app",
 ]
 dock = Dock()
-dock.items['persistent-apps'] = []
+dock.items["persistent-apps"] = []
 for item in tech_dock:
     if os.path.exists(item):
         item = dock.makeDockAppEntry(item)
-        dock.items['persistent-apps'].append(item)
+        dock.items["persistent-apps"].append(item)
 dock.save()
 ```
