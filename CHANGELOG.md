@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.3] - 2019-09-07
+
+### Added
+
+- Added more mutable keys (thanks [@WardsParadox](https://github.com/WardsParadox))
+- Added Apache 2.0 license
+
+### Fixed
+
+- Fixed issues with attribute names that contain hyphens (e.g. `mod-count`)
+- Fixed issue that caused False values to be skipped
+
 
 ## [1.0.2] - 2019-04-02
 
@@ -17,7 +29,6 @@ All notable changes to this project will be documented in this file. This projec
 - Added the ability to specify a label for Apps
 - Added "show-recents" key
 - Added pre-commit config for contributors
-- Added more mutable keys (thanks [@WardsParadox](https://github.com/WardsParadox))
 
 ### Changed
 
