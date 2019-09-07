@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file. This projec
 - Added the ability to specify a label for Apps
 - Added "show-recents" key
 - Added pre-commit config for contributors
+- Added more mutable keys (thanks [@WardsParadox](https://github.com/WardsParadox))
 
 ### Changed
 
