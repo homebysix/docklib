@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.4] - Unreleased
+
+### Fixed
+
+- Changed `.append()` to `.extend()` for Python 3 compatibility.
+
+
 ## [1.0.3] - 2019-09-07
 
 ### Added
