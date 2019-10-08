@@ -130,3 +130,29 @@ for item in tech_dock:
         dock.items["persistent-apps"].append(item)
 dock.save()
 ```
+
+Or if you prefer using a [list comprehension](https://www.pythonforbeginners.com/basics/list-comprehensions-in-python):
+
+```python
+import os
+from docklib import Dock
+
+tech_dock = [
+    "/Applications/Google Chrome.app",
+    "/Applications/App Store.app",
+    "/Applications/Managed Software Center.app",
+    "/Applications/System Preferences.app",
+    "/Applications/Utilities/Activity Monitor.app",
+    "/Applications/Utilities/Console.app",
+    "/Applications/Utilities/Disk Utility.app",
+    "/Applications/Utilities/Migration Assistant.app",
+    "/Applications/Utilities/Terminal.app",
+]
+dock = Dock()
+dock.items["persistent-apps"] = [
+    dock.makeDockAppEntry(item) for item in tech_dock if os.path.exists(item)
+]
+dock.save()
+```
+
+
