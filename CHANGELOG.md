@@ -8,6 +8,17 @@ All notable changes to this project will be documented in this file. This projec
 Nothing yet.
 
 
+## [1.0.5] - 2020-01-29
+
+### Fixed
+
+- Avoids a TypeError that occurred when a dock "section" was None ([#24](https://github.com/homebysix/docklib/issues/24), fixed by [#25](https://github.com/homebysix/docklib/pull/25))
+
+### Changed
+
+- Specified UTF-8 encoding on docklib.py file.
+
+
 ## [1.0.4] - 2019-10-08
 
 ### Fixed
