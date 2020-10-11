@@ -30,7 +30,7 @@ Docklib has been published to PyPI in order to make it available for installatio
 pip install docklib
 ```
 
-This method is not intended to be used directly on managed devices, but it could be leveraged alongside a custom Python framework (like one build with [macadmins/python](https://github.com/macadmins/python) or [relocatable-python](https://github.com/gregneagle/relocatable-python)) using a requirements file.
+This method is not intended to be used directly on managed devices, but it could be leveraged alongside a custom Python framework (like one built with [macadmins/python](https://github.com/macadmins/python) or [relocatable-python](https://github.com/gregneagle/relocatable-python)) using a requirements file.
 
 ### Manual
 
