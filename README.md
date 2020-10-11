@@ -2,13 +2,39 @@
 
 This is a Python module intended to assist IT administrators with manipulation of the macOS Dock.
 
-Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c93615341a21009f800222e) by @gregneagle, this fork has been modified to include support for some additional Dock features.
+Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c93615341a21009f800222e) by @gregneagle, this fork has been modified to include support for some additional Dock features, and has been packaged for multiple distribution options.
 
 ## Installation
 
-Place the docklib.py file in your Python path so its contents can be imported into scripts you create. Or, include the file in the same directory as your script.
+There are multiple methods of installing docklib, depending on how you plan to use it.
 
-The packages available in the [Releases](https://github.com/homebysix/docklib/releases) section will place the docklib.py file into /Library/Python/2.7/site-packages.
+### Package installer
+
+You can use the included __build_pkg.sh__ script to build a macOS installer .pkg file. You can use this package to install docklib on your own Mac, or deploy the package using a tool like Jamf or Munki to install docklib on managed devices.
+
+To run the script, `cd` to a local clone of this repository, then run:
+
+```
+./build_pkg.sh
+```
+
+The resulting pkg will be built in a temporary folder and shown in the Finder.
+
+__NOTE__: The default install destination is __/Library/Python/2.7/site-packages/docklib__, which makes docklib available to the built-in macOS Python 2.7 framework. If you leverage a different Python installation, you'll need to modify this path in the __build_pkg.sh__ script prior to building the installer package.
+
+### Pip
+
+Docklib has been published to PyPI in order to make it available for installation using pip.
+
+```
+pip install docklib
+```
+
+This method is not intended to be used directly on managed devices, but it could be leveraged alongside a custom Python framework (like one build with [macadmins/python](https://github.com/macadmins/python) or [relocatable-python](https://github.com/gregneagle/relocatable-python)) using a requirements file.
+
+### Manual
+
+Another method of using docklib is to simply place the docklib.py file in the same location as the Python script(s) you use to manipulate the macOS dock. Some examples of such scripts are included below.
 
 ## Examples
 
@@ -154,5 +180,3 @@ dock.items["persistent-apps"] = [
 ]
 dock.save()
 ```
-
-

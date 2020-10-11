@@ -1,9 +1,8 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # pylint: disable=C0103
 
-"""Routines for manipulating the Dock."""
+"""Python module intended to assist IT administrators with manipulation of the macOS Dock."""
 
 import os
 import subprocess
@@ -17,6 +16,7 @@ from Foundation import (
     CFPreferencesCopyAppValue,
     CFPreferencesSetAppValue,
 )
+
 
 # pylint: enable=E0611
 

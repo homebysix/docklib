@@ -8,6 +8,19 @@ All notable changes to this project will be documented in this file. This projec
 Nothing yet.
 
 
+## [1.1.1] - 2020-10-10
+
+### Added
+
+- Published docklib to PyPI so that administrators can manage it with `pip` and more easily bundle it in [custom Python frameworks](https://github.com/macadmins/python). Adjusted repo file structure to match Python packaging standards.
+- Created __build_pkg.sh__ script for creation of macOS package installer.
+- Created a few basic unit tests.
+
+### Changed
+
+- Updated pre-commit configuration.
+
+
 ## [1.0.5] - 2020-01-29
 
 ### Fixed
