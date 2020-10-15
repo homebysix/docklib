@@ -43,7 +43,6 @@ class TestDocklib(unittest.TestCase):
     def test_tile_data_keys(self):
         """Ensure docklib does not encounter unexpected tile-data keys."""
         sections = ["persistent-apps", "persistent-others"]
-        actual_keys = []
         expected_keys = [
             "arrangement",
             "book",
@@ -54,25 +53,30 @@ class TestDocklib(unittest.TestCase):
             "file-label",
             "file-mod-date",
             "file-type",
+            "label",
             "parent-mod-date",
             "preferreditemsize",
             "showas",
+            "url",
         ]
         for section in sections:
             for item in self.dock.items[section]:
-                actual_keys.extend(list(item["tile-data"].keys()))
-        actual_keys = list(set(actual_keys))
-        self.assertEqual(sorted(actual_keys), sorted(expected_keys))
+                for key in item["tile-data"].keys():
+                    self.assertIn(key, expected_keys)
 
     def test_tile_types(self):
         """Ensure docklib does not encounter unexpected tile-types."""
         sections = ["persistent-apps", "persistent-others"]
-        actual_types = []
-        expected_types = ["directory-tile", "file-tile"]
+        expected_types = [
+            "directory-tile",
+            "file-tile",
+            "small-spacer-tile",
+            "spacer-tile",
+            "url-tile",
+        ]
         for section in sections:
-            actual_types.extend([x["tile-type"] for x in self.dock.items[section]])
-        actual_types = list(set(actual_types))
-        self.assertEqual(sorted(actual_types), sorted(expected_types))
+            for item in self.dock.items[section]:
+                self.assertIn(item["tile-type"], expected_types)
 
     def test_add_app(self):
         """Ensure docklib can add apps to the dock."""
@@ -132,6 +136,44 @@ class TestDocklib(unittest.TestCase):
         self.dock.save()
         sleep(2)
         new_len = len(self.dock.items["persistent-others"])
+        self.assertEqual(new_len, old_len - 1)
+
+    def test_add_url(self):
+        """Ensure docklib can add url items to the dock."""
+        item = self.dock.makeDockOtherURLEntry("https://www.apple.com", "Apple Inc")
+        old_len = len(self.dock.items["persistent-others"])
+        self.dock.items["persistent-others"].append(item)
+        self.dock.save()
+        sleep(2)
+        new_len = len(self.dock.items["persistent-others"])
+        self.assertEqual(new_len, old_len + 1)
+
+    def test_remove_url(self):
+        """Ensure docklib can remove url items from the dock."""
+        old_len = len(self.dock.items["persistent-others"])
+        self.dock.removeDockURLEntry("https://www.apple.com")
+        self.dock.save()
+        sleep(2)
+        new_len = len(self.dock.items["persistent-others"])
+        self.assertEqual(new_len, old_len - 1)
+
+    def test_add_spacer(self):
+        """Ensure docklib can add a spacer item to the dock."""
+        item = self.dock.makeDockAppSpacer()
+        old_len = len(self.dock.items["persistent-apps"])
+        self.dock.items["persistent-apps"].insert(0, item)
+        self.dock.save()
+        sleep(2)
+        new_len = len(self.dock.items["persistent-apps"])
+        self.assertEqual(new_len, old_len + 1)
+
+    def test_remove_spacer(self):
+        """Ensure docklib can remove a spacer item from the dock."""
+        old_len = len(self.dock.items["persistent-apps"])
+        del self.dock.items["persistent-apps"][0]
+        self.dock.save()
+        sleep(2)
+        new_len = len(self.dock.items["persistent-apps"])
         self.assertEqual(new_len, old_len - 1)
 
 
