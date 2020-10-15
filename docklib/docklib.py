@@ -1,9 +1,8 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # pylint: disable=C0103
 
-"""Routines for manipulating the Dock."""
+"""Python module intended to assist IT administrators with manipulation of the macOS Dock."""
 
 import os
 import subprocess
@@ -17,6 +16,7 @@ from Foundation import (
     CFPreferencesCopyAppValue,
     CFPreferencesSetAppValue,
 )
+
 
 # pylint: enable=E0611
 
@@ -124,6 +124,18 @@ class Dock:
 
         return -1
 
+    def findExistingURL(self, test_url):
+        """Returns index of item with URL matching test_url or -1 if not
+        found."""
+        section_items = self.items["persistent-others"]
+        if section_items:
+            for index, item in enumerate(section_items):
+                if item["tile-data"].get("url"):
+                    if item["tile-data"]["url"]["_CFURLString"] == test_url:
+                        return index
+
+        return -1
+
     def removeDockEntry(self, label, section=None):
         """Removes a Dock entry with matching label, if any."""
         if section:
@@ -134,6 +146,12 @@ class Dock:
             found_index = self.findExistingLabel(label, section=sect)
             if found_index > -1:
                 del self.items[sect][found_index]
+
+    def removeDockURLEntry(self, url):
+        """Removes a Dock entry with matching url, if any."""
+        found_index = self.findExistingURL(url)
+        if found_index > -1:
+            del self.items["persistent-others"][found_index]
 
     def replaceDockEntry(self, thePath, label=None, section="persistent-apps"):
         """Replaces a Dock entry.
