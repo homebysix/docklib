@@ -8,12 +8,15 @@ All notable changes to this project will be documented in this file. This projec
 Nothing yet.
 
 
-## [1.1.1] - 2020-10-10
+## [1.2.0] - 2020-10-15
+
+(Includes changes from briefly-published versions 1.1.0 and 1.1.1.)
 
 ### Added
 
 - Published docklib to PyPI so that administrators can manage it with `pip` and more easily bundle it in [custom Python frameworks](https://github.com/macadmins/python). Adjusted repo file structure to match Python packaging standards.
 - Created __build_pkg.sh__ script for creation of macOS package installer.
+- Added `findExistingURL()` and `removeDockURLEntry()` functions for handling URL items.
 - Created a few basic unit tests.
 
 ### Changed
@@ -83,7 +86,9 @@ Nothing yet.
 - Initial release
 
 
-[Unreleased]: https://github.com/homebysix/docklib/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/homebysix/docklib/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/homebysix/docklib/compare/v1.0.5...v1.2.0
+[1.0.5]: https://github.com/homebysix/docklib/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/homebysix/docklib/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/homebysix/docklib/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/homebysix/docklib/compare/v1.0.1...v1.0.2
