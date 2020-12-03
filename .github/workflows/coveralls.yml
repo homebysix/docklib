@@ -1,2 +1,9 @@
-- name: Coveralls GitHub Action
-  uses: coverallsapp/github-action@v1.1.2
+on: ["push", "pull_request"]
+name: Test Coveralls
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@master
