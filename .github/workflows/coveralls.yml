@@ -7,3 +7,5 @@ jobs:
     steps:
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
