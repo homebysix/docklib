@@ -118,9 +118,11 @@ class Dock:
         found."""
         section_items = self.items[section]
         if section_items:
-            for index, item in enumerate(section_items):
-                if item["tile-data"].get("file-label") == test_label:
-                    return index
+            # Most dock items use "file-label", but URLs use "label"
+            for label_key in ("file-label", "label"):
+                for index, item in enumerate(section_items):
+                    if item["tile-data"].get(label_key) == test_label:
+                        return index
 
         return -1
 

@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.2.1] - 2021-03-01
+
+### Fixed
+
+- Fixed issue preventing `findExistingLabel()` from finding URLs' labels
 
 ## [1.2.0] - 2020-10-15
 
@@ -86,7 +91,8 @@ Nothing yet.
 - Initial release
 
 
-[Unreleased]: https://github.com/homebysix/docklib/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/homebysix/docklib/compare/v1.2.1...HEAD
+[1.2.0]: https://github.com/homebysix/docklib/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/homebysix/docklib/compare/v1.0.5...v1.2.0
 [1.0.5]: https://github.com/homebysix/docklib/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/homebysix/docklib/compare/v1.0.3...v1.0.4
