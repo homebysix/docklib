@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.2.1] - 2021-03-01
+
+### Fixed
+
+- Fixed issue preventing `findExistingLabel()` from finding URLs' labels
 
 ## [1.2.0] - 2020-10-15
 
