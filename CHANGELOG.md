@@ -9,6 +9,10 @@ Nothing yet.
 
 ## [1.2.1] - 2021-03-01
 
+### Added
+
+- Signed GitHub release package
+
 ### Fixed
 
 - Fixed issue preventing `findExistingLabel()` from finding URLs' labels
