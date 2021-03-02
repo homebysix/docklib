@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Name of pkg signing certificate in keychain. (Default to unsigned.)
+CERTNAME="$1"
+
 cd "$(dirname "$0")" || exit 1
 
 echo "Preparing source folder..."
@@ -22,5 +25,12 @@ echo "  Version: $VERSION"
 echo "Building package..."
 OUTFILE="$OUTPUTDIR/docklib-$VERSION.pkg"
 pkgbuild --root "$PKGROOT" --identifier com.elliotjordan.docklib --version "$VERSION" "$OUTFILE"
+
+if [[ -n $CERTNAME ]]; then
+    echo "Signing package..."
+    productsign --sign "$CERTNAME" "$OUTFILE" "${OUTFILE/.pkg/-signed.pkg}"
+    mv "${OUTFILE/.pkg/-signed.pkg}" "$OUTFILE"
+fi
+
 echo "$OUTFILE"
 open "$OUTPUTDIR"
