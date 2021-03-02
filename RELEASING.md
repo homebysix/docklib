@@ -1,5 +1,14 @@
 # Releasing new versions of docklib
 
+## Requirements
+
+- Local clone of this repository
+- Twine (`pip3 install twine`)
+- Account on test.pypi.org
+- Account on pypi.org
+
+## Steps
+
 1. Ensure the version in __\_\_init\_\_.py__ has been updated.
 
 1. Ensure the change log has been updated and reflects actual release date.
@@ -41,6 +50,10 @@
 
         ./build_pkg.sh
 
-1. Create new release on GitHub. Add notes from change log. Attach built installer package.
+    By default the resulting package is unsigned. To sign the package, provide the name of the signing certificate from your macOS keychain.
+
+        ./build_pkg.sh "Developer ID Installer: John Doe (ABCDE12345)"
+
+1. Create new [release](https://github.com/homebysix/docklib/releases) on GitHub. Add notes from change log. Attach built installer package.
 
 1. Announce to [dock-management](https://macadmins.slack.com/archives/C17NRH534) and other relevant channels, if desired.
