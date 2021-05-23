@@ -12,6 +12,16 @@ import subprocess
 from distutils.version import LooseVersion
 from platform import mac_ver
 
+try:
+    # Python 3
+    from urllib.parse import unquote, urlparse
+except ImportError:
+    # Python 2
+    from urllib import unquote
+
+    from urlparse import urlparse
+
+
 # pylint: disable=E0611
 from Foundation import (
     NSURL,
@@ -19,7 +29,6 @@ from Foundation import (
     CFPreferencesCopyAppValue,
     CFPreferencesSetAppValue,
 )
-
 
 # pylint: enable=E0611
 
@@ -119,39 +128,82 @@ class Dock:
         subprocess.call(["/bin/launchctl", "load", self._DOCK_LAUNCHAGENT_FILE])
         subprocess.call(["/bin/launchctl", "start", self._DOCK_LAUNCHAGENT_ID])
 
-    def findExistingLabel(self, test_label, section="persistent-apps"):
-        """Returns index of item with label matching test_label or -1 if not
-        found."""
+    def findExistingEntry(self, match_str, match_on="any", section="persistent-apps"):
+        """Returns index of a Dock item identified by match_str or -1 if no item
+        is found.
+
+        match_on values:
+            label: match dock items with this file-label or label
+                (e.g. Safari)
+                NOTE: Labels can vary depending on the user's selected language.
+            path: match dock items with this path on disk
+                (e.g. /System/Applications/Safari.app)
+            name_ext: match dock items with this file/folder basename
+                (e.g. Safari.app)
+            name_noext: match dock items with this basename, without extension
+                (e.g. Safari)
+            any: Try all the criteria above in order, and return the first result.
+        """
         section_items = self.items[section]
         if section_items:
-            # Most dock items use "file-label", but URLs use "label"
-            for label_key in ("file-label", "label"):
+            # Determine the order of attributes to match on.
+            if match_on == "any":
+                match_ons = ["label", "path", "name_ext", "name_noext"]
+            else:
+                match_ons = [match_on]
+
+            # Iterate through match criteria (ensures a full scan of the Dock
+            # for each criterion, if matching on "any").
+            for m in match_ons:
+                # Iterate through items in section
                 for index, item in enumerate(section_items):
-                    if item["tile-data"].get(label_key) == test_label:
+                    url = item["tile-data"].get("file-data", {}).get("_CFURLString", "")
+                    path = unquote(urlparse(url.rstrip("/")).path)
+                    name_ext = os.path.basename(path)
+                    name_noext = os.path.splitext(name_ext)[0]
+
+                    if m == "label":
+                        # Most dock items use "file-label", but URLs use "label"
+                        for label_key in ("file-label", "label"):
+                            if item["tile-data"].get(label_key) == match_str:
+                                return index
+                    elif m == "path" and path == match_str:
+                        return index
+                    elif m == "name_ext" and name_ext == match_str:
+                        return index
+                    elif m == "name_noext" and name_noext == match_str:
                         return index
 
         return -1
 
-    def findExistingURL(self, test_url):
-        """Returns index of item with URL matching test_url or -1 if not
+    def findExistingLabel(self, match_str, section="persistent-apps"):
+        """Points to findExistingEntry, maintained for compatibility."""
+        return self.findExistingEntry(match_str, match_on="label", section=section)
+
+    def findExistingURL(self, match_url):
+        """Returns index of item with URL matching match_url or -1 if not
         found."""
         section_items = self.items["persistent-others"]
         if section_items:
             for index, item in enumerate(section_items):
                 if item["tile-data"].get("url"):
-                    if item["tile-data"]["url"]["_CFURLString"] == test_url:
+                    if item["tile-data"]["url"]["_CFURLString"] == match_url:
                         return index
 
         return -1
 
-    def removeDockEntry(self, label, section=None):
-        """Removes a Dock entry with matching label, if any."""
+    def removeDockEntry(self, match_str, match_on="label", section=None):
+        """Removes a Dock entry identified by "match_str", if any. Defaults to
+        matching "match_str" by label. See the findExistingEntry docstring for
+        other match criteria."""
         if section:
             sections = [section]
         else:
             sections = self._SECTIONS
         for sect in sections:
-            found_index = self.findExistingLabel(label, section=sect)
+            found_index = self.findExistingEntry(
+                match_str, match_on=match_on, section=sect
+            )
             if found_index > -1:
                 del self.items[sect][found_index]
 
@@ -161,22 +213,45 @@ class Dock:
         if found_index > -1:
             del self.items["persistent-others"][found_index]
 
-    def replaceDockEntry(self, thePath, label=None, section="persistent-apps"):
+    def replaceDockEntry(
+        self,
+        newpath,
+        match_str=None,
+        match_on="any",
+        label=None,  # deprecated
+        section="persistent-apps",
+    ):
         """Replaces a Dock entry.
 
-        If label is None, then a label is derived from the item path.
-        The new entry replaces an entry with the given or derived label
+        If match_str is provided, it will be used to match the item to be replaced.
+        See the findExistingEntry function docstring for possible "match_on" values.
+
+        If match_str is not provided, the item to be replaced will be derived from
+        the newpath filename, without extension.
+
+        The "label" parameter is deprecated in favor of match_str and will be
+        removed someday.
         """
         if section == "persistent-apps":
-            new_item = self.makeDockAppEntry(thePath)
+            newitem = self.makeDockAppEntry(newpath)
         else:
-            new_item = self.makeDockOtherEntry(thePath)
-        if new_item:
-            if not label:
-                label = os.path.splitext(os.path.basename(thePath))[0]
-            found_index = self.findExistingLabel(label, section=section)
-            if found_index > -1:
-                self.items[section][found_index] = new_item
+            newitem = self.makeDockOtherEntry(newpath)
+        if not newitem:
+            return
+        if label:
+            print(
+                "WARNING: The label parameter is deprecated. Use match_str instead. "
+                "Details: https://github.com/homebysix/docklib/issues/32"
+            )
+            match_str = label
+            match_on = "label"
+        if not match_str:
+            match_str = os.path.splitext(os.path.basename(newpath))[0]
+        found_index = self.findExistingEntry(
+            match_str, match_on=match_on, section=section
+        )
+        if found_index > -1:
+            self.items[section][found_index] = newitem
 
     def makeDockAppSpacer(self, type="spacer-tile"):
         """Makes an empty space in the Dock."""
