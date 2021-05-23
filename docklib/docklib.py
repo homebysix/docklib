@@ -100,6 +100,8 @@ class Dock:
             except Exception:
                 raise DockError
         for key in self._MUTABLE_KEYS:
+            # Python doesn't support hyphens in attribute names, so convert
+            # to/from underscores as needed.
             if getattr(self, key.replace("-", "_")) is not None:
                 try:
                     CFPreferencesSetAppValue(
