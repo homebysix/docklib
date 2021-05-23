@@ -5,7 +5,40 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+The focus of this release is to make docklib functions less focused on dock item labels, since labels can change depending on the user's selected language. (See [#32](https://github.com/homebysix/docklib/issues/32) for details.)
+
+### Added
+
+- A new `findExistingEntry` function that can find dock items based on several attributes.
+
+    The default behavior of `findExistingEntry` is to match the provided string on (in order of preference):
+
+    1. label
+    2. path
+    3. filename with extension
+    4. filename without extension
+
+    The `match_on` parameter can be specified to select only one of those attributes to match, if desired. See the `findExistingEntry` function docstring for available parameters and values.
+
+### Changed
+
+- The `findExistingLabel` function is now simply a pointer to the new `findExistingEntry` function. `findExistingLabel` will be maintained for backward-compatibility.
+
+- The `removeDockEntry` function has a new `match_on` parameter that mirrors the same parameter in `findExistingEntry`. In order to preserve existing behavior, the default match attribute is still label.
+
+- The `replaceDockEntry` function has two new parameters:
+    - `match_str`, which allows specifying the item intended to be replaced in the dock (replaces the now deprecated `label` parameter).
+    - `match_on`, which mirrors the same parameter in `findExistingEntry`. Default behavior is to match on the same attributes listed above, in the same order of preference.
+
+### Deprecated
+
+- The `label` parameter of `replaceDockEntry` is deprecated, and it's encouraged to use `match_str` instead. This allows existing items to be replaced based on multiple attributes rather than just label. As stated above, this makes dock customization scripts more reliable in multilingual environments.
+
+    A warning has been added that alerts administrators to this deprecation.
+
+- **This is the last release of docklib that will support Python 2.** Future releases will only be tested in Python 3.
+
+    If you haven't started bundling a Python 3 runtime for your management tools, [this blog article from @scriptingosx](https://scriptingosx.com/2020/02/wrangling-pythons/) is a good read. Also: a reminder that docklib is already included in the "recommended" flavor of the [macadmins/python](https://github.com/macadmins/python) packages.
 
 ## [1.2.1] - 2021-03-01
 
@@ -15,7 +48,7 @@ Nothing yet.
 
 ### Fixed
 
-- Fixed issue preventing `findExistingLabel()` from finding URLs' labels
+- Fixed issue preventing `findExistingLabel` from finding URLs' labels
 
 ## [1.2.0] - 2020-10-15
 
@@ -25,7 +58,7 @@ Nothing yet.
 
 - Published docklib to PyPI so that administrators can manage it with `pip` and more easily bundle it in [custom Python frameworks](https://github.com/macadmins/python). Adjusted repo file structure to match Python packaging standards.
 - Created __build_pkg.sh__ script for creation of macOS package installer.
-- Added `findExistingURL()` and `removeDockURLEntry()` functions for handling URL items.
+- Added `findExistingURL` and `removeDockURLEntry` functions for handling URL items.
 - Created a few basic unit tests.
 
 ### Changed
