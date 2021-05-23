@@ -37,6 +37,7 @@ class Dock:
     _DOCK_PLIST = os.path.expanduser("~/Library/Preferences/com.apple.dock.plist")
     _DOCK_LAUNCHAGENT_ID = "com.apple.Dock.agent"
     _DOCK_LAUNCHAGENT_FILE = "/System/Library/LaunchAgents/com.apple.Dock.plist"
+    # TODO: static-apps and static-others
     _SECTIONS = ["persistent-apps", "persistent-others"]
     _MUTABLE_KEYS = [
         "autohide",
