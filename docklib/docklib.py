@@ -192,10 +192,10 @@ class Dock:
 
         return -1
 
-    def removeDockEntry(self, match_str, match_on="label", section=None):
+    def removeDockEntry(self, match_str, match_on="any", section=None):
         """Removes a Dock entry identified by "match_str", if any. Defaults to
-        matching "match_str" by label. See the findExistingEntry docstring for
-        other match criteria."""
+        matching "match_str" by the "any" criteria order listed in the
+        findExistingEntry docstring."""
         if section:
             sections = [section]
         else:

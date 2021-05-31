@@ -24,7 +24,7 @@ The focus of this release is to make docklib functions less focused on dock item
 
 - The `findExistingLabel` function is now simply a pointer to the new `findExistingEntry` function. `findExistingLabel` will be maintained for backward-compatibility.
 
-- The `removeDockEntry` function has a new `match_on` parameter that mirrors the same parameter in `findExistingEntry`. In order to preserve existing behavior, the default match attribute is still label.
+- The `removeDockEntry` function has a new `match_on` parameter that mirrors the same parameter in `findExistingEntry`. Default behavior is to match on the same attributes listed above, in the same order of preference. (This is a change in behavior from previous versions of docklib. If you prefer to continue removing items solely based on label, you should specify `match_on="label"` in your function call.)
 
 - The `replaceDockEntry` function has two new parameters:
     - `match_str`, which allows specifying the item intended to be replaced in the dock (replaces the now deprecated `label` parameter).
