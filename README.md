@@ -113,7 +113,7 @@ import os
 from docklib import Dock
 
 dock = Dock()
-if dock.findExistingItem("Documents", section="persistent-others") == -1:
+if dock.findExistingEntry("Documents", section="persistent-others") == -1:
     item = dock.makeDockOtherEntry(
         os.path.expanduser("~/Documents"), arrangement=3, displayas=1, showas=1
     )
@@ -129,7 +129,7 @@ import os
 from docklib import Dock
 
 dock = Dock()
-if dock.findExistingItem("GitHub", section="persistent-others") == -1:
+if dock.findExistingEntry("GitHub", section="persistent-others") == -1:
     item = dock.makeDockOtherURLEntry("https://www.github.com/", label="GitHub")
     dock.items["persistent-others"] = [item] + dock.items["persistent-others"]
     dock.save()
