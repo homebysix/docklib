@@ -9,7 +9,7 @@
 
 ## Steps
 
-1. Ensure the version in __\_\_init\_\_.py__ has been updated.
+1. Ensure the version in __docklib/\_\_init\_\_.py__ has been updated.
 
 1. Ensure the change log has been updated and reflects actual release date.
 
@@ -17,7 +17,7 @@
 
 1. Run docklib unit tests and fix any errors:
 
-        managed_python3 -m unittest -v tests/unit.py
+        managed_python3 -m unittest -v tests.unit
 
 1. Build a new distribution package:
 
