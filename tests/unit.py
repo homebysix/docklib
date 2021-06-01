@@ -4,6 +4,9 @@ Unit tests for docklib. NOTE: These tests are designed to mutate the logged in
 user's dock. If all tests pass, the end state should be the same as the
 beginning state, but be aware that there is some possibility of undesired
 modifications remaining if the tests fail.
+
+To run tests:
+    managed_python3 -m unittest -v tests.unit
 """
 
 import os
@@ -95,12 +98,70 @@ class TestDocklib(unittest.TestCase):
         new_len = len(self.dock.items["persistent-apps"])
         self.assertEqual(new_len, old_len + 1)
 
-    def test_35_find_app(self):
-        """Ensure docklib can find apps in the dock."""
+    def test_33_find_label(self):
+        """Ensure docklib can find apps in the dock using findExistingLabel."""
+        # NOTE: Only works if test environment is set to English language.
         app_idx = self.dock.findExistingLabel("Chess", section="persistent-apps")
         self.assertGreaterEqual(app_idx, 0)
 
         app_idx = self.dock.findExistingLabel("FooBarApp", section="persistent-apps")
+        self.assertEqual(app_idx, -1)
+
+    def test_35_find_entry_any(self):
+        """Ensure docklib can find apps in the dock by any attribute."""
+        app_idx = self.dock.findExistingEntry("Chess", section="persistent-apps")
+        self.assertGreaterEqual(app_idx, 0)
+
+        app_idx = self.dock.findExistingEntry("FooBarApp", section="persistent-apps")
+        self.assertEqual(app_idx, -1)
+
+    def test_36_find_entry_label(self):
+        """Ensure docklib can find apps in the dock by label."""
+        # NOTE: Only works if test environment is set to English language.
+        app_idx = self.dock.findExistingEntry(
+            "Chess", match_on="label", section="persistent-apps"
+        )
+        self.assertGreaterEqual(app_idx, 0)
+
+        app_idx = self.dock.findExistingEntry(
+            "FooBarApp", match_on="label", section="persistent-apps"
+        )
+        self.assertEqual(app_idx, -1)
+
+    def test_37_find_entry_path(self):
+        """Ensure docklib can find apps in the dock by path."""
+        app_idx = self.dock.findExistingEntry(
+            "/System/Applications/Chess.app", match_on="path", section="persistent-apps"
+        )
+        self.assertGreaterEqual(app_idx, 0)
+
+        app_idx = self.dock.findExistingEntry(
+            "/Applications/FooBarApp.app", match_on="path", section="persistent-apps"
+        )
+        self.assertEqual(app_idx, -1)
+
+    def test_38_find_entry_ext(self):
+        """Ensure docklib can find apps in the dock by filename with extension."""
+        app_idx = self.dock.findExistingEntry(
+            "Chess.app", match_on="name_ext", section="persistent-apps"
+        )
+        self.assertGreaterEqual(app_idx, 0)
+
+        app_idx = self.dock.findExistingEntry(
+            "FooBarApp.app", match_on="name_ext", section="persistent-apps"
+        )
+        self.assertEqual(app_idx, -1)
+
+    def test_39_find_entry_noext(self):
+        """Ensure docklib can find apps in the dock by filename without extension."""
+        app_idx = self.dock.findExistingEntry(
+            "Chess", match_on="name_noext", section="persistent-apps"
+        )
+        self.assertGreaterEqual(app_idx, 0)
+
+        app_idx = self.dock.findExistingEntry(
+            "FooBarApp", match_on="name_noext", section="persistent-apps"
+        )
         self.assertEqual(app_idx, -1)
 
     def test_40_remove_app(self):

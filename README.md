@@ -32,6 +32,10 @@ pip install docklib
 
 This method is not intended to be used directly on managed devices, but it could be leveraged alongside a custom Python framework (like one built with [macadmins/python](https://github.com/macadmins/python) or [relocatable-python](https://github.com/gregneagle/relocatable-python)) using a requirements file.
 
+### Managed Python
+
+Docklib is included in the "recommended" flavor of the [macadmins/python](https://github.com/macadmins/python) release package. Installing this package and using `#!/usr/local/managed_python3` for your docklib script shebang may be the most self-contained and future-proof way to deploy docklib.
+
 ### Manual
 
 Another method of using docklib is to simply place the docklib.py file in the same location as the Python script(s) you use to manipulate the macOS dock. Some examples of such scripts are included below.
@@ -109,7 +113,7 @@ import os
 from docklib import Dock
 
 dock = Dock()
-if dock.findExistingLabel("Documents", section="persistent-others") == -1:
+if dock.findExistingEntry("Documents", section="persistent-others") == -1:
     item = dock.makeDockOtherEntry(
         os.path.expanduser("~/Documents"), arrangement=3, displayas=1, showas=1
     )
@@ -125,7 +129,7 @@ import os
 from docklib import Dock
 
 dock = Dock()
-if dock.findExistingLabel("GitHub", section="persistent-others") == -1:
+if dock.findExistingEntry("GitHub", section="persistent-others") == -1:
     item = dock.makeDockOtherURLEntry("https://www.github.com/", label="GitHub")
     dock.items["persistent-others"] = [item] + dock.items["persistent-others"]
     dock.save()
