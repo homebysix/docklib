@@ -17,7 +17,7 @@
 
 1. Run docklib unit tests and fix any errors:
 
-        /usr/local/munki/munki-python -m unittest -v tests/unit.py
+        managed_python3 -m unittest -v tests/unit.py
 
 1. Build a new distribution package:
 
@@ -30,9 +30,9 @@
 
 1. View resulting project on test.pypi.org and make sure it looks good.
 
-1. Install test docklib in Munki Python on a test Mac:
+1. Install test docklib in MacAdmins Python on a test Mac:
 
-        /usr/local/munki/Python.framework/Versions/Current/bin/python3 -m pip install --upgrade -i https://test.pypi.org/simple/ docklib
+        managed_python3 -m pip install --upgrade -i https://test.pypi.org/simple/ docklib
 
 1. Perform tests - manual for now.
 
@@ -42,9 +42,9 @@
 
 1. View resulting project on pypi.org and make sure it looks good.
 
-1. Install production docklib in Munki Python on a test Mac:
+1. Install production docklib in MacAdmins Python on a test Mac:
 
-        /usr/local/munki/Python.framework/Versions/Current/bin/python3 -m pip install --upgrade docklib
+        managed_python3 -m pip install --upgrade docklib
 
 1. Build new installer package using __build_pkg.sh__:
 

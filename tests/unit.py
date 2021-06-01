@@ -6,7 +6,7 @@ beginning state, but be aware that there is some possibility of undesired
 modifications remaining if the tests fail.
 
 To run tests:
-    /path/to/your/python -m unittest -v tests.unit
+    managed_python3 -m unittest -v tests.unit
 """
 
 import os
