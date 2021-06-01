@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+
+## [1.3.0] - 2021-05-31
+
 The focus of this release is to make docklib functions less focused on dock item labels, since labels can change depending on the user's selected language. (See [#32](https://github.com/homebysix/docklib/issues/32) for details.)
 
 ### Added
@@ -128,8 +133,9 @@ The focus of this release is to make docklib functions less focused on dock item
 - Initial release
 
 
-[Unreleased]: https://github.com/homebysix/docklib/compare/v1.2.1...HEAD
-[1.2.0]: https://github.com/homebysix/docklib/compare/v1.2.0...v1.2.1
+[Unreleased]: https://github.com/homebysix/docklib/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/homebysix/docklib/compare/v1.2.1...v1.3.0
+[1.2.1]: https://github.com/homebysix/docklib/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/homebysix/docklib/compare/v1.0.5...v1.2.0
 [1.0.5]: https://github.com/homebysix/docklib/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/homebysix/docklib/compare/v1.0.3...v1.0.4
