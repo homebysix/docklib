@@ -90,7 +90,7 @@ dock.save()
 from docklib import Dock
 
 dock = Dock()
-print dock.orientation
+print(dock.orientation)
 ```
 
 ### Make the Dock display on the left, and enable autohide
