@@ -4,6 +4,16 @@ This is a Python module intended to assist IT administrators with manipulation o
 
 Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c93615341a21009f800222e) by @gregneagle, this fork has been modified to include support for some additional Dock features, and has been packaged for multiple distribution options.
 
+## docklib or dockutil?
+
+The very capable [dockutil](https://github.com/kcrawford/dockutil) tool serves a similar function to docklib. Why would Mac admins choose one over the other?
+
+The primary benefit of docklib is that it allows the Dock to be manipulated in a "Pythonic" way. By parsing the Dock configuration into an object with attributes and data structures that can be modified using familiar functions like `.append()` and `.insert()`, docklib aims to make Python scripters feel at home.
+
+In contrast, dockutil behaves more like a shell command-line utility. This makes dockutil a good choice if you're more comfortable writing user setup scripts in bash or zsh.
+
+Dockutil also has an `--allhomes` argument that allows Dock configuration for all users to be modified at the same time. Docklib isn't designed for this, instead focusing on configuring the Dock for the user that is currently logged in (for example, via an [outset](https://github.com/chilcote/outset) `login-once` or `login-every` script).
+
 ## Installation
 
 There are multiple methods of installing docklib, depending on how you plan to use it.
