@@ -184,3 +184,7 @@ dock.items["persistent-apps"] = [
 ]
 dock.save()
 ```
+
+## More information
+
+For more examples and tips for creating your docklib script, see my [Writing Resilient Docklib Scripts](https://www.elliotjordan.com/posts/resilient-docklib/) guide.
