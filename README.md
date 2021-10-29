@@ -197,4 +197,7 @@ dock.save()
 
 ## More information
 
-For more examples and tips for creating your docklib script, see my [Writing Resilient Docklib Scripts](https://www.elliotjordan.com/posts/resilient-docklib/) guide.
+For more examples and tips for creating your docklib script, see my guides on:
+
+- [Writing Resilient Docklib Scripts](https://www.elliotjordan.com/posts/resilient-docklib/)
+- [Deploying and running docklib scripts using Outset](https://www.elliotjordan.com/posts/docklib-outset/)
