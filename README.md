@@ -8,11 +8,9 @@ Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c9361
 
 The very capable [dockutil](https://github.com/kcrawford/dockutil) tool serves a similar function to docklib. Why would Mac admins choose one over the other?
 
-The primary benefit of docklib is that it allows the Dock to be manipulated in a "Pythonic" way. By parsing the Dock configuration into an object with attributes and data structures that can be modified using familiar functions like `.append()` and `.insert()`, docklib aims to make Python scripters feel at home.
+The primary benefit of **docklib** is that it allows the Dock to be manipulated in a "Pythonic" way. By parsing the Dock configuration into an object with attributes and data structures that can be modified using familiar functions like `.append()` and `.insert()`, docklib aims to make Python scripters feel at home.
 
-In contrast, dockutil behaves more like a shell command-line utility. This makes dockutil a good choice if you're more comfortable writing user setup scripts in bash or zsh.
-
-Dockutil also has an `--allhomes` argument that allows Dock configuration for all users to be modified at the same time. Docklib isn't designed for this, instead focusing on configuring the Dock for the user that is currently logged in (for example, via an [outset](https://github.com/chilcote/outset) `login-once` or `login-every` script).
+In contrast, **dockutil** behaves more like a shell command-line utility. This makes dockutil a good choice if you're more comfortable writing user setup scripts in bash or zsh. Dockutil also has an `--allhomes` argument that allows Dock configuration for all users to be modified at the same time. Docklib isn't designed for this, instead focusing on configuring the Dock for the user that is currently logged in (for example, via an [outset](https://github.com/chilcote/outset) `login-once` or `login-every` script). [Here's](https://appleshare.it/posts/use-dockutil-in-a-script/) a great article to get you started with dockutil, if that sounds like what you're after.
 
 ## Installation
 
