@@ -2,12 +2,17 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## [2.0.0] - 2024-04-04
 
-Removing OS detection and python2 support, ran pyupgrade, passes ruff format and ruff check.
-TODO: bump from alpha status, fill in Added/Changed/Deprecated section
+### Removed
 
+- Removed Python 2 support
+- Removed macOS version detection
+
+### Changed
+
+- `makeDockAppSpacer()` parameter name has changed from `type` to `tile_type`. Please update your scripts if you use this function.
+- Updated unit tests with new `is-beta` key present in Dock plist.
 
 ## [1.3.0] - 2021-05-31
 
