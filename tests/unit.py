@@ -63,6 +63,7 @@ class TestDocklib(unittest.TestCase):
             "file-label",
             "file-mod-date",
             "file-type",
+            "is-beta",
             "label",
             "parent-mod-date",
             "preferreditemsize",
