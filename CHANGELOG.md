@@ -3,9 +3,10 @@
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased]
+## [2.0.0] - 2024-04-04
 
-Nothing yet.
+Removing OS detection and python2 support, ran pyupgrade, passes ruff format and ruff check.
+TODO: bump from alpha status, fill in Added/Changed/Deprecated section
 
 
 ## [1.3.0] - 2021-05-31
