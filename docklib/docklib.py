@@ -1,6 +1,9 @@
 # pylint: disable=C0103
 
-"""Python module intended to assist IT administrators with manipulation of the macOS Dock."""
+"""Python module intended to assist IT administrators with manipulation of the macOS Dock.
+
+See project details on GitHub: https://github.com/homebysix/docklib
+"""
 
 import os
 import subprocess
