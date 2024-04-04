@@ -89,8 +89,8 @@ class Dock:
         for key in self._SECTIONS:
             try:
                 CFPreferencesSetAppValue(key, self.items[key], self._DOMAIN)
-            except Exception:
-                raise DockError
+            except Exception as exc:
+                raise DockError from exc
         for key in self._MUTABLE_KEYS:
             # Python doesn't support hyphens in attribute names, so convert
             # to/from underscores as needed.
@@ -101,8 +101,8 @@ class Dock:
                         getattr(self, key.replace("-", "_")),
                         self._DOMAIN,
                     )
-                except Exception:
-                    raise DockError
+                except Exception as exc:
+                    raise DockError from exc
         if not CFPreferencesAppSynchronize(self._DOMAIN):
             raise DockError
 
