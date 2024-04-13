@@ -2,11 +2,19 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - 2024-04-13
 
-## [Unreleased]
+This release fixes compatibility with Python 10.12 by removing the dependencies on `distutils.versions`. (Thanks to @arubdesu for #42.)
 
-Nothing yet.
+### Removed
 
+- Removed Python 2 support. If you're still deploying docklib to macOS versions prior to Monterey 12.3, be sure you're deploying a Python runtime like [MacAdmins Python](https://github.com/macadmins/python) rather than relying on the built-in `/usr/bin/python`.
+- Removed macOS version detection. This may cause unexpected behavior when referencing the `AllowDockFixupOverride`, `show-recents`, `recent-apps`, `dblclickbehavior`, `show-recents-immutable`, and `windowtabbing` keys on macOS versions prior to Big Sur 11.0.
+
+### Changed
+
+- `makeDockAppSpacer()` parameter name has changed from `type` to `tile_type`. Please update your scripts if you use this function.
+- Updated unit tests with new `is-beta` preference key present in macOS Sonoma Dock tiles.
 
 ## [1.3.0] - 2021-05-31
 

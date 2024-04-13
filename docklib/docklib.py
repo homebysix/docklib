@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # pylint: disable=C0103
 
 """Python module intended to assist IT administrators with manipulation of the macOS Dock.
@@ -9,18 +7,7 @@ See project details on GitHub: https://github.com/homebysix/docklib
 
 import os
 import subprocess
-from distutils.version import LooseVersion
-from platform import mac_ver
-
-try:
-    # Python 3
-    from urllib.parse import unquote, urlparse
-except ImportError:
-    # Python 2
-    from urllib import unquote
-
-    from urlparse import urlparse
-
+from urllib.parse import unquote, urlparse
 
 # pylint: disable=E0611
 from Foundation import (
@@ -50,38 +37,33 @@ class Dock:
     _SECTIONS = ["persistent-apps", "persistent-others"]
     _MUTABLE_KEYS = [
         "autohide",
-        "orientation",
-        "tilesize",
-        "largesize",
-        "orientation-immutable",
-        "position-immutable",
         "autohide-immutable",
+        "contents-immutable",
+        "dblclickbehavior",
+        "largesize",
+        "launchanim",
+        "launchanim-immutable",
         "magnification",
         "magnification-immutable",
         "magsize-immutable",
-        "show-progress-indicators",
-        "contents-immutable",
-        "size-immutable",
         "mineffect",
         "mineffect-immutable",
-        "size-immutable",
         "minimize-to-application",
         "minimize-to-application-immutable",
+        "orientation",
+        "orientation-immutable",
+        "position-immutable",
+        "tilesize",
         "show-process-indicators",
-        "launchanim",
-        "launchanim-immutable",
+        "show-progress-indicators",
+        "show-recents",
+        "show-recents-immutable",
+        "size-immutable",
+        "windowtabbing",
+        "AllowDockFixupOverride",
     ]
 
-    _IMMUTABLE_KEYS = ["mod-count", "trash-full"]
-    if LooseVersion(mac_ver()[0]) >= LooseVersion("10.12"):
-        _MUTABLE_KEYS.append("AllowDockFixupOverride")
-    if LooseVersion(mac_ver()[0]) >= LooseVersion("10.14"):
-        _MUTABLE_KEYS.append("show-recents")
-        _IMMUTABLE_KEYS.append("recent-apps")
-    if LooseVersion(mac_ver()[0]) >= LooseVersion("10.15"):
-        _MUTABLE_KEYS.extend(
-            ["dblclickbehavior", "show-recents-immutable", "windowtabbing"]
-        )
+    _IMMUTABLE_KEYS = ["mod-count", "recent-apps", "trash-full"]
 
     items = {}
 
@@ -107,8 +89,8 @@ class Dock:
         for key in self._SECTIONS:
             try:
                 CFPreferencesSetAppValue(key, self.items[key], self._DOMAIN)
-            except Exception:
-                raise DockError
+            except Exception as exc:
+                raise DockError from exc
         for key in self._MUTABLE_KEYS:
             # Python doesn't support hyphens in attribute names, so convert
             # to/from underscores as needed.
@@ -119,8 +101,8 @@ class Dock:
                         getattr(self, key.replace("-", "_")),
                         self._DOMAIN,
                     )
-                except Exception:
-                    raise DockError
+                except Exception as exc:
+                    raise DockError from exc
         if not CFPreferencesAppSynchronize(self._DOMAIN):
             raise DockError
 
@@ -253,12 +235,12 @@ class Dock:
         if found_index > -1:
             self.items[section][found_index] = newitem
 
-    def makeDockAppSpacer(self, type="spacer-tile"):
+    def makeDockAppSpacer(self, tile_type="spacer-tile"):
         """Makes an empty space in the Dock."""
-        if type not in ["spacer-tile", "small-spacer-tile"]:
-            msg = "{0}: invalid makeDockAppSpacer type.".format(type)
+        if tile_type not in ["spacer-tile", "small-spacer-tile"]:
+            msg = f"{tile_type}: invalid makeDockAppSpacer type."
             raise ValueError(msg)
-        result = {"tile-data": {}, "tile-type": type}
+        result = {"tile-data": {}, "tile-type": tile_type}
 
         return result
 
