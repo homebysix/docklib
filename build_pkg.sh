@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# NOTE: This script is DEPRECATED as of docklib v2.0.0. See release notes here:
+# https://github.com/homebysix/docklib/releases/tag/v2.0.0
+
 # Name of pkg signing certificate in keychain. (Default to unsigned.)
 CERTNAME="$1"
 
@@ -12,11 +15,11 @@ rm -fv ./docklib/*.pyc
 echo "Preparing pkgroot and output folders..."
 PKGROOT=$(mktemp -d /tmp/docklib-build-root-XXXXXXXXXXX)
 OUTPUTDIR=$(mktemp -d /tmp/docklib-output-XXXXXXXXXXX)
-mkdir -p "$PKGROOT/Library/Python/2.7/site-packages/"
+mkdir -p "$PKGROOT/Library/ManagedFrameworks/Python/Python3.framework/Versions/Current/lib/python3.10/site-packages/"
 
 echo "Copying docklib into pkgroot..."
-# Customize this path if you're not using the macOS built-in Python 2.7 with docklib.
-cp -R ./docklib "$PKGROOT/Library/Python/2.7/site-packages/docklib"
+# Customize this path to match the Python runtime you're deploying to your managed Macs
+cp -R ./docklib "$PKGROOT/Library/ManagedFrameworks/Python/Python3.framework/Versions/Current/lib/python3.10/site-packages/docklib"
 
 echo "Determining version..."
 VERSION=$(awk -F \" '/version/{print $2}' docklib/__init__.py)

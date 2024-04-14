@@ -46,14 +46,6 @@
 
         managed_python3 -m pip install --upgrade docklib
 
-1. Build new installer package using __build_pkg.sh__:
-
-        ./build_pkg.sh
-
-    By default the resulting package is unsigned. To sign the package, provide the name of the signing certificate from your macOS keychain.
-
-        ./build_pkg.sh "Developer ID Installer: John Doe (ABCDE12345)"
-
-1. Create new [release](https://github.com/homebysix/docklib/releases) on GitHub. Add notes from change log. Attach built installer package.
+1. Create new [release](https://github.com/homebysix/docklib/releases) on GitHub. Add notes from change log.
 
 1. Announce to [dock-management](https://macadmins.slack.com/archives/C17NRH534) and other relevant channels, if desired.
