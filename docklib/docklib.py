@@ -65,9 +65,9 @@ class Dock:
 
     _IMMUTABLE_KEYS = ["mod-count", "recent-apps", "trash-full"]
 
-    items = {}
+    items: dict = {}
 
-    def __init__(self):
+    def __init__(self) -> None:
         for key in self._SECTIONS:
             try:
                 section = CFPreferencesCopyAppValue(key, self._DOMAIN)
@@ -81,7 +81,7 @@ class Dock:
             except Exception:
                 raise
 
-    def save(self):
+    def save(self) -> None:
         """Saves our (modified) Dock preferences."""
         # unload Dock launchd job so we can make our changes unmolested
         subprocess.call(["/bin/launchctl", "unload", self._DOCK_LAUNCHAGENT_FILE])
@@ -110,7 +110,9 @@ class Dock:
         subprocess.call(["/bin/launchctl", "load", self._DOCK_LAUNCHAGENT_FILE])
         subprocess.call(["/bin/launchctl", "start", self._DOCK_LAUNCHAGENT_ID])
 
-    def findExistingEntry(self, match_str, match_on="any", section="persistent-apps"):
+    def findExistingEntry(
+        self, match_str: str, match_on: str = "any", section: str = "persistent-apps"
+    ) -> int:
         """Returns index of a Dock item identified by match_str or -1 if no item
         is found.
 
@@ -158,11 +160,13 @@ class Dock:
 
         return -1
 
-    def findExistingLabel(self, match_str, section="persistent-apps"):
+    def findExistingLabel(
+        self, match_str: str, section: str = "persistent-apps"
+    ) -> int:
         """Points to findExistingEntry, maintained for compatibility."""
         return self.findExistingEntry(match_str, match_on="label", section=section)
 
-    def findExistingURL(self, match_url):
+    def findExistingURL(self, match_url: str) -> int:
         """Returns index of item with URL matching match_url or -1 if not
         found."""
         section_items = self.items["persistent-others"]
@@ -174,7 +178,9 @@ class Dock:
 
         return -1
 
-    def removeDockEntry(self, match_str, match_on="any", section=None):
+    def removeDockEntry(
+        self, match_str: str, match_on: str = "any", section: str = ""
+    ) -> None:
         """Removes a Dock entry identified by "match_str", if any. Defaults to
         matching "match_str" by the "any" criteria order listed in the
         findExistingEntry docstring."""
@@ -189,7 +195,7 @@ class Dock:
             if found_index > -1:
                 del self.items[sect][found_index]
 
-    def removeDockURLEntry(self, url):
+    def removeDockURLEntry(self, url: str) -> None:
         """Removes a Dock entry with matching url, if any."""
         found_index = self.findExistingURL(url)
         if found_index > -1:
@@ -197,12 +203,12 @@ class Dock:
 
     def replaceDockEntry(
         self,
-        newpath,
-        match_str=None,
-        match_on="any",
-        label=None,  # deprecated
-        section="persistent-apps",
-    ):
+        newpath: str,
+        match_str: str = "",
+        match_on: str = "any",
+        label: str = "",  # deprecated
+        section: str = "persistent-apps",
+    ) -> None:
         """Replaces a Dock entry.
 
         If match_str is provided, it will be used to match the item to be replaced.
@@ -235,7 +241,7 @@ class Dock:
         if found_index > -1:
             self.items[section][found_index] = newitem
 
-    def makeDockAppSpacer(self, tile_type="spacer-tile"):
+    def makeDockAppSpacer(self, tile_type: str = "spacer-tile") -> dict:
         """Makes an empty space in the Dock."""
         if tile_type not in ["spacer-tile", "small-spacer-tile"]:
             msg = f"{tile_type}: invalid makeDockAppSpacer type."
@@ -244,7 +250,7 @@ class Dock:
 
         return result
 
-    def makeDockAppEntry(self, thePath, label_name=None):
+    def makeDockAppEntry(self, thePath: str, label_name: str = "") -> dict:
         """Returns a dictionary corresponding to a Dock application item."""
         if not label_name:
             label_name = os.path.splitext(os.path.basename(thePath))[0]
@@ -260,7 +266,9 @@ class Dock:
 
         return result
 
-    def makeDockOtherEntry(self, thePath, arrangement=0, displayas=1, showas=0):
+    def makeDockOtherEntry(
+        self, thePath: str, arrangement: int = 0, displayas: int = 1, showas: int = 0
+    ) -> dict:
         """Returns a dictionary corresponding to a Dock folder or file item.
 
         arrangement values:
@@ -312,7 +320,7 @@ class Dock:
 
         return result
 
-    def makeDockOtherURLEntry(self, theURL, label=None):
+    def makeDockOtherURLEntry(self, theURL: str, label: str = "") -> dict:
         """Returns a dictionary corresponding to a URL."""
         if label is None:
             label_name = str(theURL)

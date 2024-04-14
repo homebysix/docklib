@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added type hinting to docklib functions, and mypy config file to store type hint settings
+- Updated release documentation to reflect deprecation of build_pkg.sh script
+
 ## [2.0.0] - 2024-04-13
 
 This release fixes compatibility with Python 10.12 by removing the dependencies on `distutils.versions`. (Thanks to @arubdesu for #42.)
@@ -141,7 +148,8 @@ The focus of this release is to make docklib functions less focused on dock item
 - Initial release
 
 
-[Unreleased]: https://github.com/homebysix/docklib/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/homebysix/docklib/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/homebysix/docklib/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/homebysix/docklib/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/homebysix/docklib/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/homebysix/docklib/compare/v1.0.5...v1.2.0
