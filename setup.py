@@ -13,7 +13,7 @@ README = (HERE / "README.md").read_text()
 
 def get_version(rel_path):
     """Given a path to a Python init file, return the version string."""
-    with open(rel_path, "r") as openfile:
+    with open(rel_path, "r", encoding="utf-8") as openfile:
         lines = openfile.readlines()
     for line in lines:
         if line.startswith("__version__"):
