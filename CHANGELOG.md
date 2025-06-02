@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file. This projec
 - Added type hinting to docklib functions, and mypy config file to store type hint settings
 - Updated release documentation to reflect deprecation of build_pkg.sh script
 
+### Changed
+
+- Adjusted test naming to allow discoverability by unittest module.
+- Added test artifacts to gitignore.
+
 ## [2.0.0] - 2024-04-13
 
 This release fixes compatibility with Python 10.12 by removing the dependencies on `distutils.versions`. (Thanks to @arubdesu for #42.)
