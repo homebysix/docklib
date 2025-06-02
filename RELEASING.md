@@ -17,7 +17,7 @@
 
 1. Run docklib unit tests and fix any errors:
 
-        managed_python3 -m unittest -v tests.unit
+        managed_python3 -m unittest -v
 
 1. Build a new distribution package:
 
