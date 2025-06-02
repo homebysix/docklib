@@ -1,6 +1,9 @@
+__pycache__/
+.coverage
 .DS_Store
 *.egg-info
 *.pyc
 build/
 dist/
+htmlcov/
 venv/
