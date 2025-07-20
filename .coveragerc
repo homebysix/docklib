@@ -1,0 +1,20 @@
+[run]
+# Omit files/directories from coverage
+omit =
+    .venv/*
+    tests/*
+    repos/*
+    setup.py
+# Include all Python files in the source directory
+source = .
+
+[report]
+# Exclude specific line patterns
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError
+
+[html]
+# Directory for HTML coverage reports
+directory = htmlcov
