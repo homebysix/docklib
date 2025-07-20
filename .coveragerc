@@ -4,7 +4,6 @@ omit =
     .venv/*
     tests/*
     repos/*
-    setup.py
 # Include all Python files in the source directory
 source = .
 
