@@ -6,13 +6,15 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Added
 
-- Added type hinting to docklib functions, and mypy config file to store type hint settings
-- Updated release documentation to reflect deprecation of build_pkg.sh script
+- Added type hinting to docklib functions, and mypy config file to store type hint settings.
 
 ### Changed
 
+- Significantly rewrote unit tests, mocking dock operations and removing sequential run dependency.
+- Moved from legacy setup.py to pyproject.toml.
 - Adjusted test naming to allow discoverability by unittest module.
 - Added test artifacts to gitignore.
+- Updated release documentation to reflect deprecation of build_pkg.sh script.
 
 ## [2.0.0] - 2024-04-13
 
