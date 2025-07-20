@@ -1,9 +1,32 @@
-__pycache__/
-.coverage
+# macOS system files
 .DS_Store
-*.egg-info
+
+# Python cache and compiled files
+__pycache__/
 *.pyc
+
+# Config file
+*.json
+
+# Output directories
+initiatives/
+reports/
+
+# Cloned repos
+repos/
+
+# Test coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Python virtual environment
+.venv/
+
+# Environment variables
+.env
+
+# Build artifacts
 build/
 dist/
-htmlcov/
-venv/
+*.egg-info/
