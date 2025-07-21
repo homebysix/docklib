@@ -7,9 +7,11 @@ name = "docklib"
 dynamic = ["version"]
 description = "Python module intended to assist IT administrators with manipulation of the macOS Dock."
 readme = "README.md"
-license = {text = "Apache 2.0"}
-authors = [
-    {name = "Elliot Jordan", email = "elliot@elliotjordan.com"}
+license = {text = "Apache-2.0"}
+authors = [{name = "Elliot Jordan", email = "elliot@elliotjordan.com"}]
+requires-python = ">=3.8"
+dependencies = [
+    "pyobjc-framework-Cocoa",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -18,46 +20,35 @@ classifiers = [
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Topic :: System :: Systems Administration",
     "Topic :: Utilities",
 ]
-requires-python = ">=3.8"
-dependencies = [
-    "pyobjc-framework-Cocoa",
-]
 
 [project.urls]
-Homepage = "https://github.com/homebysix/docklib"
 Repository = "https://github.com/homebysix/docklib"
 Issues = "https://github.com/homebysix/docklib/issues"
 Changelog = "https://github.com/homebysix/docklib/blob/main/CHANGELOG.md"
 
-[tool.setuptools]
-packages = ["docklib"]
-include-package-data = true
-
-[tool.setuptools.dynamic]
-version = {attr = "docklib.__version__"}
-
-# Optional: Development dependencies
 [project.optional-dependencies]
 dev = [
-    "coverage[toml]>=6.0",
     "black>=22.0",
+    "coverage[toml]>=6.0",
     "flake8>=5.0",
     "mypy>=1.0",
     "pre-commit>=2.20",
 ]
 
-# Tool configurations can also be included in pyproject.toml
+[tool.setuptools]
+packages = ["docklib"]
+
+[tool.setuptools.dynamic]
+version = {attr = "docklib.__version__"}
+
+[tool.black]
+line-length = 88
+
 [tool.coverage.run]
 source = ["docklib"]
-omit = ["tests/*", "setup.py"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -67,16 +58,9 @@ exclude_lines = [
     "raise NotImplementedError",
 ]
 
-[tool.black]
-line-length = 88
-target-version = ["py38", "py39", "py310", "py311", "py312"]
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+ignore_missing_imports = true

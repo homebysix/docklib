@@ -1,3 +1,0 @@
-pyobjc==10.1
-setuptools
-wheel
