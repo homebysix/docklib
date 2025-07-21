@@ -10,11 +10,15 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Changed
 
+- Minimum supported macOS version is now 13.0.\*
+- Minimum supported Python version is now 3.9.\*
 - Significantly rewrote unit tests, mocking dock operations and removing sequential run dependency.
 - Moved from legacy setup.py to pyproject.toml.
 - Adjusted test naming to allow discoverability by unittest module.
 - Added test artifacts to gitignore.
 - Updated release documentation to reflect deprecation of build_pkg.sh script.
+
+\* _Docklib may still work on older versions of macOS and Python, but no testing has been undertaken to verify this._
 
 ## [2.0.0] - 2024-04-13
 

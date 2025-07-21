@@ -9,7 +9,7 @@ description = "Python module intended to assist IT administrators with manipulat
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [{name = "Elliot Jordan", email = "elliot@elliotjordan.com"}]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "pyobjc-framework-Cocoa",
 ]
