@@ -2,50 +2,53 @@
 
 ## Requirements
 
-- Local clone of this repository
-- Twine (`pip3 install twine`)
-- Account on test.pypi.org
-- Account on pypi.org
+- Virtual environment: `[[ -d .venv ]] || virtualenv .venv`
+- Local clone with dev environment: `.venv/bin/pip install -e ".[dev]"`
+- TestPyPI and PyPI accounts with Trusted Publishers configured ([details](https://docs.pypi.org/trusted-publishers/))
 
-## Steps
+## Release Process
 
-1. Ensure the version in __docklib/\_\_init\_\_.py__ has been updated.
+1. **Switch to local dev branch**.
 
-1. Ensure the change log has been updated and reflects actual release date.
+1. **Update version** in:
+    - `docklib/__init__.py`
+    - `pyproject.toml`
 
-1. Merge development branch to main/master branch.
+1. **Update changelog**:
+    - Reflect all recent changes
+    - Add version number and release date
+    - Add `## Unreleased` section
+    - Update diff links at bottom
 
-1. Run docklib unit tests and fix any errors:
+1. **Merge to main** and switch to local main branch.
 
-        managed_python3 -m unittest -v
+1. **Create and push tag**:
 
-1. Build a new distribution package:
+   ```bash
+   git tag -a v2.1.1 -m "Release version 2.1.1"
+   git push origin v2.1.1
+   ```
 
-        rm -fv dist/*
-        python3 setup.py sdist bdist_wheel
+1. **Monitor and approve publication**:
+   - Automatically publishes to [TestPyPI](https://test.pypi.org/project/docklib/) for testing
+   - GitHub Actions will wait for manual approval to publish to production PyPI
+   - Go to [Actions](https://github.com/homebysix/docklib/actions) → "Release" workflow → click "Review deployments" → approve "production"
 
-1. Upload package to test.pypi.org:
+1. **Create GitHub release** (manual):
+   - Go to [Releases](https://github.com/homebysix/docklib/releases) and click "Create a new release"
+   - Select the tag (v2.1.1), add release title and description from changelog
 
-        twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+## Manual Fallback
 
-1. View resulting project on test.pypi.org and make sure it looks good.
+If GitHub Actions fail:
 
-1. Install test docklib in MacAdmins Python on a test Mac:
+```bash
+# Test and build
+.venv/bin/python -m coverage run -m unittest discover -v tests/
+.venv/bin/python -m pip install build twine
+.venv/bin/python -m build
 
-        managed_python3 -m pip install --upgrade -i https://test.pypi.org/simple/ docklib
-
-1. Perform tests - manual for now.
-
-1. Upload package to pypi.org:
-
-        twine upload dist/*
-
-1. View resulting project on pypi.org and make sure it looks good.
-
-1. Install production docklib in MacAdmins Python on a test Mac:
-
-        managed_python3 -m pip install --upgrade docklib
-
-1. Create new [release](https://github.com/homebysix/docklib/releases) on GitHub. Add notes from change log.
-
-1. Announce to [dock-management](https://macadmins.slack.com/archives/C17NRH534) and other relevant channels, if desired.
+# Publish
+twine upload --repository testpypi dist/*  # Test first
+twine upload dist/*  # Then production
+```
