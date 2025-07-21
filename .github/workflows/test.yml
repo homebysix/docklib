@@ -1,0 +1,54 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-12, macos-13, macos-14]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        exclude:
+          # macOS 12 may have issues with Python 3.12
+          - os: macos-12
+            python-version: '3.12'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -e ".[dev]"
+
+    - name: System information
+      run: |
+        echo "Python version: $(python --version)"
+        echo "macOS version: $(sw_vers -productVersion)"
+        echo "Architecture: $(uname -m)"
+        echo "Python executable: $(which python)"
+
+    - name: Run tests with coverage
+      if: matrix.python-version == '3.11' && matrix.os == 'macos-13'
+      run: |
+        python -m coverage run -m unittest discover -v tests/
+        python -m coverage report -m
+        python -m coverage xml
+
+    - name: Test import
+      run: |
+        python -c "import docklib; print('✓ docklib imported successfully')"
+        python -c "from docklib import Dock, DockError; print('✓ Main classes imported successfully')"
