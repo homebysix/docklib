@@ -19,17 +19,21 @@ class TestDocklib(unittest.TestCase):
 
     def setUp(self):
         # Mock the system calls and Core Foundation functions
-        self.mock_subprocess_patcher = patch("docklib.subprocess.call")
+        self.mock_subprocess_patcher = patch("docklib.docklib.subprocess.call")
         self.mock_subprocess = self.mock_subprocess_patcher.start()
 
-        self.mock_cfpref_sync_patcher = patch("docklib.CFPreferencesAppSynchronize")
+        self.mock_cfpref_sync_patcher = patch(
+            "docklib.docklib.CFPreferencesAppSynchronize"
+        )
         self.mock_cfpref_sync = self.mock_cfpref_sync_patcher.start()
         self.mock_cfpref_sync.return_value = True
 
-        self.mock_cfpref_set_patcher = patch("docklib.CFPreferencesSetAppValue")
+        self.mock_cfpref_set_patcher = patch("docklib.docklib.CFPreferencesSetAppValue")
         self.mock_cfpref_set = self.mock_cfpref_set_patcher.start()
 
-        self.mock_cfpref_copy_patcher = patch("docklib.CFPreferencesCopyAppValue")
+        self.mock_cfpref_copy_patcher = patch(
+            "docklib.docklib.CFPreferencesCopyAppValue"
+        )
         self.mock_cfpref_copy = self.mock_cfpref_copy_patcher.start()
 
         # Create mock objects that have mutableCopy method
