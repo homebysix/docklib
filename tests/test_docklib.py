@@ -499,6 +499,583 @@ class TestDocklib(unittest.TestCase):
         new_len = len(self.dock.items["persistent-apps"])
         self.assertEqual(new_len, old_len - 1)
 
+    def test_find_existing_url(self):
+        """Ensure docklib can find URL items by URL."""
+        # Add a URL item to the dock
+        url_item = {
+            "tile-type": "url-tile",
+            "tile-data": {
+                "label": "GitHub",
+                "url": {
+                    "_CFURLString": "https://www.github.com/",
+                    "_CFURLStringType": 15,
+                },
+            },
+        }
+        self.dock.items["persistent-others"].append(url_item)
+
+        # Test finding existing URL
+        found_index = self.dock.findExistingURL("https://www.github.com/")
+        self.assertGreaterEqual(found_index, 0)
+
+        # Test finding non-existing URL
+        not_found_index = self.dock.findExistingURL("https://www.example.com/")
+        self.assertEqual(not_found_index, -1)
+
+    def test_remove_dock_entry_by_label(self):
+        """Ensure docklib can remove dock entries by label."""
+        # Add a test app to remove
+        test_app = {
+            "tile-type": "file-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Applications/Test%20App.app/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "Test App",
+                "file-type": 41,
+            },
+        }
+        self.dock.items["persistent-apps"].append(test_app)
+        initial_count = len(self.dock.items["persistent-apps"])
+
+        # Remove by label
+        self.dock.removeDockEntry(
+            "Test App", match_on="label", section="persistent-apps"
+        )
+
+        # Verify removal
+        final_count = len(self.dock.items["persistent-apps"])
+        self.assertEqual(final_count, initial_count - 1)
+
+        # Verify the app is no longer found
+        found_index = self.dock.findExistingEntry(
+            "Test App", match_on="label", section="persistent-apps"
+        )
+        self.assertEqual(found_index, -1)
+
+    def test_remove_dock_entry_by_path(self):
+        """Ensure docklib can remove dock entries by path."""
+        # Add a test app to remove
+        test_path = "/Applications/Test App.app"
+        test_app = {
+            "tile-type": "file-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Applications/Test%20App.app/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "Test App",
+                "file-type": 41,
+            },
+        }
+        self.dock.items["persistent-apps"].append(test_app)
+        initial_count = len(self.dock.items["persistent-apps"])
+
+        # Remove by path
+        self.dock.removeDockEntry(test_path, match_on="path", section="persistent-apps")
+
+        # Verify removal
+        final_count = len(self.dock.items["persistent-apps"])
+        self.assertEqual(final_count, initial_count - 1)
+
+    def test_remove_dock_entry_all_sections(self):
+        """Ensure docklib can remove dock entries from all sections when no section specified."""
+        # Add test items to both sections
+        test_app = {
+            "tile-type": "file-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Applications/Test%20App.app/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "Test App",
+                "file-type": 41,
+            },
+        }
+        test_folder = {
+            "tile-type": "directory-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Users/test/Test%20Folder/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "Test Folder",
+                "arrangement": 1,
+                "displayas": 1,
+                "showas": 0,
+                "dock-extra": False,
+            },
+        }
+
+        self.dock.items["persistent-apps"].append(test_app)
+        self.dock.items["persistent-others"].append(test_folder)
+
+        initial_apps_count = len(self.dock.items["persistent-apps"])
+        initial_others_count = len(self.dock.items["persistent-others"])
+
+        # Remove from all sections (should find and remove the app)
+        self.dock.removeDockEntry("Test App", match_on="label")
+
+        # Verify removal from apps section
+        final_apps_count = len(self.dock.items["persistent-apps"])
+        self.assertEqual(final_apps_count, initial_apps_count - 1)
+
+        # Verify others section unchanged
+        final_others_count = len(self.dock.items["persistent-others"])
+        self.assertEqual(final_others_count, initial_others_count)
+
+    def test_remove_dock_entry_nonexistent(self):
+        """Ensure removing non-existent dock entry doesn't cause errors."""
+        initial_apps_count = len(self.dock.items["persistent-apps"])
+        initial_others_count = len(self.dock.items["persistent-others"])
+
+        # Try to remove non-existent item
+        self.dock.removeDockEntry("Nonexistent App", match_on="label")
+
+        # Verify no changes
+        final_apps_count = len(self.dock.items["persistent-apps"])
+        final_others_count = len(self.dock.items["persistent-others"])
+        self.assertEqual(final_apps_count, initial_apps_count)
+        self.assertEqual(final_others_count, initial_others_count)
+
+    def test_replace_dock_entry_by_match_str(self):
+        """Ensure docklib can replace dock entries using match_str."""
+        # Add a test app to replace
+        old_app = {
+            "tile-type": "file-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Applications/Old%20App.app/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "Old App",
+                "file-type": 41,
+            },
+        }
+        self.dock.items["persistent-apps"].append(old_app)
+
+        # Mock the makeDockAppEntry to return a predictable result
+        with patch.object(self.dock, "makeDockAppEntry") as mock_make_entry:
+            new_app = {
+                "tile-type": "file-tile",
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Applications/New%20App.app/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "New App",
+                    "file-type": 41,
+                },
+            }
+            mock_make_entry.return_value = new_app
+
+            # Replace the app
+            self.dock.replaceDockEntry(
+                "/Applications/New App.app", match_str="Old App", match_on="label"
+            )
+
+            # Verify the replacement
+            found_index = self.dock.findExistingEntry("New App", match_on="label")
+            self.assertGreaterEqual(found_index, 0)
+
+            # Verify old app is gone
+            old_index = self.dock.findExistingEntry("Old App", match_on="label")
+            self.assertEqual(old_index, -1)
+
+    def test_replace_dock_entry_auto_match(self):
+        """Ensure docklib can replace dock entries using auto-derived match string."""
+        # Add a test app to replace
+        old_app = {
+            "tile-type": "file-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Applications/TestApp.app/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "TestApp",
+                "file-type": 41,
+            },
+        }
+        self.dock.items["persistent-apps"].append(old_app)
+
+        # Mock the makeDockAppEntry to return a predictable result
+        with patch.object(self.dock, "makeDockAppEntry") as mock_make_entry:
+            new_app = {
+                "tile-type": "file-tile",
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Applications/NewTestApp.app/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "NewTestApp",
+                    "file-type": 41,
+                },
+            }
+            mock_make_entry.return_value = new_app
+
+            # Replace using filename without extension (should auto-derive match_str)
+            self.dock.replaceDockEntry("/Applications/TestApp.app")
+
+            # Verify the replacement occurred
+            found_index = self.dock.findExistingEntry("NewTestApp", match_on="label")
+            self.assertGreaterEqual(found_index, 0)
+
+    def test_replace_dock_entry_nonexistent(self):
+        """Ensure replacing non-existent dock entry doesn't cause errors."""
+        initial_count = len(self.dock.items["persistent-apps"])
+
+        # Mock the makeDockAppEntry
+        with patch.object(self.dock, "makeDockAppEntry") as mock_make_entry:
+            new_app = {
+                "tile-type": "file-tile",
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Applications/New%20App.app/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "New App",
+                    "file-type": 41,
+                },
+            }
+            mock_make_entry.return_value = new_app
+
+            # Try to replace non-existent item
+            self.dock.replaceDockEntry(
+                "/Applications/New App.app", match_str="Nonexistent App"
+            )
+
+            # Verify no changes
+            final_count = len(self.dock.items["persistent-apps"])
+            self.assertEqual(final_count, initial_count)
+
+    def test_replace_dock_entry_other_section(self):
+        """Ensure docklib can replace entries in persistent-others section."""
+        # Add a test folder to replace
+        old_folder = {
+            "tile-type": "directory-tile",
+            "tile-data": {
+                "file-data": {
+                    "_CFURLString": "file:///Users/test/Old%20Folder/",
+                    "_CFURLStringType": 15,
+                },
+                "file-label": "Old Folder",
+                "arrangement": 1,
+                "displayas": 1,
+                "showas": 0,
+                "dock-extra": False,
+            },
+        }
+        self.dock.items["persistent-others"].append(old_folder)
+
+        # Mock the makeDockOtherEntry
+        with patch.object(self.dock, "makeDockOtherEntry") as mock_make_entry:
+            new_folder = {
+                "tile-type": "directory-tile",
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Users/test/New%20Folder/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "New Folder",
+                    "arrangement": 1,
+                    "displayas": 1,
+                    "showas": 0,
+                    "dock-extra": False,
+                },
+            }
+            mock_make_entry.return_value = new_folder
+
+            # Replace the folder
+            self.dock.replaceDockEntry(
+                "/Users/test/New Folder",
+                match_str="Old Folder",
+                match_on="label",
+                section="persistent-others",
+            )
+
+            # Verify the replacement
+            found_index = self.dock.findExistingEntry(
+                "New Folder", match_on="label", section="persistent-others"
+            )
+            self.assertGreaterEqual(found_index, 0)
+
+    def test_make_dock_app_spacer_default(self):
+        """Ensure docklib can create a default spacer."""
+        spacer = self.dock.makeDockAppSpacer()
+
+        expected_spacer = {"tile-data": {}, "tile-type": "spacer-tile"}
+
+        self.assertEqual(spacer, expected_spacer)
+
+    def test_make_dock_app_spacer_small(self):
+        """Ensure docklib can create a small spacer."""
+        spacer = self.dock.makeDockAppSpacer("small-spacer-tile")
+
+        expected_spacer = {"tile-data": {}, "tile-type": "small-spacer-tile"}
+
+        self.assertEqual(spacer, expected_spacer)
+
+    def test_make_dock_app_spacer_invalid_type(self):
+        """Ensure docklib raises error for invalid spacer type."""
+        with self.assertRaises(ValueError) as context:
+            self.dock.makeDockAppSpacer("invalid-spacer-type")
+
+        self.assertIn("invalid makeDockAppSpacer type", str(context.exception))
+
+    def test_make_dock_app_entry_default_label(self):
+        """Ensure docklib can create app entry with default label."""
+        # Mock NSURL.fileURLWithPath_
+        with patch("docklib.docklib.NSURL") as mock_nsurl:
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "file:///Applications/Safari.app/"
+            mock_nsurl.fileURLWithPath_.return_value = mock_url
+
+            app_entry = self.dock.makeDockAppEntry("/Applications/Safari.app")
+
+            expected_entry = {
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Applications/Safari.app/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "Safari",
+                    "file-type": 41,
+                },
+                "tile-type": "file-tile",
+            }
+
+            self.assertEqual(app_entry, expected_entry)
+            mock_nsurl.fileURLWithPath_.assert_called_once_with(
+                "/Applications/Safari.app"
+            )
+
+    def test_make_dock_app_entry_custom_label(self):
+        """Ensure docklib can create app entry with custom label."""
+        # Mock NSURL.fileURLWithPath_
+        with patch("docklib.docklib.NSURL") as mock_nsurl:
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "file:///Applications/Safari.app/"
+            mock_nsurl.fileURLWithPath_.return_value = mock_url
+
+            app_entry = self.dock.makeDockAppEntry(
+                "/Applications/Safari.app", "My Browser"
+            )
+
+            expected_entry = {
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Applications/Safari.app/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "My Browser",
+                    "file-type": 41,
+                },
+                "tile-type": "file-tile",
+            }
+
+            self.assertEqual(app_entry, expected_entry)
+
+    def test_make_dock_other_entry_file_defaults(self):
+        """Ensure docklib can create other entry for file with defaults."""
+        # Mock NSURL.fileURLWithPath_ and os.path.isdir
+        with (
+            patch("docklib.docklib.NSURL") as mock_nsurl,
+            patch("docklib.docklib.os.path.isdir") as mock_isdir,
+        ):
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "file:///Users/test/document.txt"
+            mock_nsurl.fileURLWithPath_.return_value = mock_url
+            mock_isdir.return_value = False
+
+            other_entry = self.dock.makeDockOtherEntry("/Users/test/document.txt")
+
+            expected_entry = {
+                "tile-data": {
+                    "file-data": {
+                        "_CFURLString": "file:///Users/test/document.txt",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "document",
+                    "dock-extra": False,
+                },
+                "tile-type": "file-tile",
+            }
+
+            self.assertEqual(other_entry, expected_entry)
+
+    def test_make_dock_other_entry_directory_defaults(self):
+        """Ensure docklib can create other entry for directory with defaults."""
+        # Mock NSURL.fileURLWithPath_ and os.path.isdir
+        with (
+            patch("docklib.docklib.NSURL") as mock_nsurl,
+            patch("docklib.docklib.os.path.isdir") as mock_isdir,
+        ):
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "file:///Users/test/Documents/"
+            mock_nsurl.fileURLWithPath_.return_value = mock_url
+            mock_isdir.return_value = True
+
+            other_entry = self.dock.makeDockOtherEntry("/Users/test/Documents")
+
+            expected_entry = {
+                "tile-data": {
+                    "arrangement": 1,  # sort by name
+                    "displayas": 1,
+                    "file-data": {
+                        "_CFURLString": "file:///Users/test/Documents/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "Documents",
+                    "dock-extra": False,
+                    "showas": 0,
+                },
+                "tile-type": "directory-tile",
+            }
+
+            self.assertEqual(other_entry, expected_entry)
+
+    def test_make_dock_other_entry_downloads_special_case(self):
+        """Ensure docklib handles Downloads folder special case."""
+        # Mock NSURL.fileURLWithPath_ and os.path.isdir
+        with (
+            patch("docklib.docklib.NSURL") as mock_nsurl,
+            patch("docklib.docklib.os.path.isdir") as mock_isdir,
+        ):
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "file:///Users/test/Downloads/"
+            mock_nsurl.fileURLWithPath_.return_value = mock_url
+            mock_isdir.return_value = True
+
+            other_entry = self.dock.makeDockOtherEntry("/Users/test/Downloads")
+
+            expected_entry = {
+                "tile-data": {
+                    "arrangement": 2,  # sort by date added for Downloads
+                    "displayas": 1,
+                    "file-data": {
+                        "_CFURLString": "file:///Users/test/Downloads/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "Downloads",
+                    "dock-extra": False,
+                    "showas": 0,
+                },
+                "tile-type": "directory-tile",
+            }
+
+            self.assertEqual(other_entry, expected_entry)
+
+    def test_make_dock_other_entry_custom_options(self):
+        """Ensure docklib can create other entry with custom options."""
+        # Mock NSURL.fileURLWithPath_ and os.path.isdir
+        with (
+            patch("docklib.docklib.NSURL") as mock_nsurl,
+            patch("docklib.docklib.os.path.isdir") as mock_isdir,
+        ):
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "file:///Users/test/Pictures/"
+            mock_nsurl.fileURLWithPath_.return_value = mock_url
+            mock_isdir.return_value = True
+
+            other_entry = self.dock.makeDockOtherEntry(
+                "/Users/test/Pictures",
+                arrangement=3,  # sort by modification date
+                displayas=0,  # display as stack
+                showas=2,  # grid view
+            )
+
+            expected_entry = {
+                "tile-data": {
+                    "arrangement": 3,
+                    "displayas": 0,
+                    "file-data": {
+                        "_CFURLString": "file:///Users/test/Pictures/",
+                        "_CFURLStringType": 15,
+                    },
+                    "file-label": "Pictures",
+                    "dock-extra": False,
+                    "showas": 2,
+                },
+                "tile-type": "directory-tile",
+            }
+
+            self.assertEqual(other_entry, expected_entry)
+
+    def test_make_dock_other_url_entry_default_label(self):
+        """Ensure docklib can create URL entry with default label."""
+        # Mock NSURL.URLWithString_
+        with patch("docklib.docklib.NSURL") as mock_nsurl:
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "https://www.apple.com/"
+            mock_nsurl.URLWithString_.return_value = mock_url
+
+            url_entry = self.dock.makeDockOtherURLEntry("https://www.apple.com/")
+
+            expected_entry = {
+                "tile-data": {
+                    "label": "",  # Default is empty string, not the URL
+                    "url": {
+                        "_CFURLString": "https://www.apple.com/",
+                        "_CFURLStringType": 15,
+                    },
+                },
+                "tile-type": "url-tile",
+            }
+
+            self.assertEqual(url_entry, expected_entry)
+            mock_nsurl.URLWithString_.assert_called_once_with("https://www.apple.com/")
+
+    def test_make_dock_other_url_entry_custom_label(self):
+        """Ensure docklib can create URL entry with custom label."""
+        # Mock NSURL.URLWithString_
+        with patch("docklib.docklib.NSURL") as mock_nsurl:
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "https://www.github.com/"
+            mock_nsurl.URLWithString_.return_value = mock_url
+
+            url_entry = self.dock.makeDockOtherURLEntry(
+                "https://www.github.com/", "GitHub"
+            )
+
+            expected_entry = {
+                "tile-data": {
+                    "label": "GitHub",
+                    "url": {
+                        "_CFURLString": "https://www.github.com/",
+                        "_CFURLStringType": 15,
+                    },
+                },
+                "tile-type": "url-tile",
+            }
+
+            self.assertEqual(url_entry, expected_entry)
+
+    def test_make_dock_other_url_entry_none_label(self):
+        """Ensure docklib handles None label correctly."""
+        # Mock NSURL.URLWithString_
+        with patch("docklib.docklib.NSURL") as mock_nsurl:
+            mock_url = MagicMock()
+            mock_url.absoluteString.return_value = "https://www.example.com/"
+            mock_nsurl.URLWithString_.return_value = mock_url
+
+            url_entry = self.dock.makeDockOtherURLEntry(
+                "https://www.example.com/", None
+            )
+
+            expected_entry = {
+                "tile-data": {
+                    "label": "https://www.example.com/",
+                    "url": {
+                        "_CFURLString": "https://www.example.com/",
+                        "_CFURLStringType": 15,
+                    },
+                },
+                "tile-type": "url-tile",
+            }
+
+            self.assertEqual(url_entry, expected_entry)
+
 
 class TestLaunchAgentManager(unittest.TestCase):
     """Unit test class for LaunchAgentManager."""
