@@ -4,31 +4,20 @@ This is a Python module intended to assist IT administrators with manipulation o
 
 Originally created as a [Gist](https://gist.github.com/gregneagle/5c422d709c93615341a21009f800222e) by @gregneagle, this fork has been modified to include support for some additional Dock features, and has been packaged for multiple distribution options.
 
-## docklib or dockutil?
-
-The very capable [dockutil](https://github.com/kcrawford/dockutil) tool serves a similar function to docklib. Why would Mac admins choose one over the other?
-
-The primary benefit of **docklib** is that it allows the Dock to be manipulated in a "Pythonic" way. By parsing the Dock configuration into an object with attributes and data structures that can be modified using familiar functions like `.append()` and `.insert()`, docklib aims to make Python scripters feel at home.
-
-In contrast, **dockutil** behaves more like a shell command-line utility and is written in Swift. This makes dockutil a good choice if you don't have a 'management python' or you're more comfortable writing user setup scripts in bash or zsh. Dockutil also has an `--allhomes` argument that allows Dock configuration for all users to be modified at the same time. Docklib isn't designed for this, instead focusing on configuring the Dock for the user that is currently logged in (for example, via an [outset](https://github.com/macadmins/outset) `login-once` or `login-every` script). [Here's](https://appleshare.it/posts/use-dockutil-in-a-script/) a great article to get you started with dockutil, if that sounds like what you're after.
+> [!TIP] docklib or dockutil?
+> The very capable [dockutil](https://github.com/kcrawford/dockutil) tool serves a similar function to docklib. Why would Mac admins choose one over the other?
+>
+> The primary benefit of **docklib** is that it allows the Dock to be manipulated in a "Pythonic" way. By parsing the Dock configuration into an object with attributes and data structures that can be modified using familiar functions like `.append()` and `.insert()`, docklib aims to make Python scripters feel at home.
+>
+> In contrast, **dockutil** behaves more like a shell command-line utility and is written in Swift. This makes dockutil a good choice if you don't have a 'management python' or you're more comfortable writing user setup scripts in bash or zsh. Dockutil also has an `--allhomes` argument that allows Dock configuration for all users to be modified at the same time. Docklib isn't designed for this, instead focusing on configuring the Dock for the user that is currently logged in (for example, via an [outset](https://github.com/macadmins/outset) `login-once` or `login-every` script). [Here's](https://appleshare.it/posts/use-dockutil-in-a-script/) a great article to get you started with dockutil, if that sounds like what you're after.
 
 ## Installation
 
-There are multiple methods of installing docklib, depending on how you plan to use it.
+There are multiple installation options, but the first option is recommended for most.
 
-### Package installer
+### MacAdmins Python
 
-You can use the included __build_pkg.sh__ script to build a macOS installer .pkg file. You can use this package to install docklib on your own Mac, or deploy the package using a tool like Jamf or Munki to install docklib on managed devices.
-
-To run the script, `cd` to a local clone of this repository, then run:
-
-```
-./build_pkg.sh
-```
-
-The resulting pkg will be built in a temporary folder and shown in the Finder.
-
-__NOTE__: The default install destination is __/Library/Python/2.7/site-packages/docklib__, which makes docklib available to the built-in macOS Python 2.7 framework. If you leverage a different Python installation, you'll need to modify this path in the __build_pkg.sh__ script prior to building the installer package.
+Docklib is included in the "recommended" flavor of the [macadmins/python](https://github.com/macadmins/python) release package. Installing this package and using `#!/usr/local/managed_python3` for your docklib script shebang is the easiest way to manage and scale docklib use.
 
 ### Pip
 
@@ -40,13 +29,9 @@ pip install docklib
 
 This method is not intended to be used directly on managed devices, but it could be leveraged alongside a custom Python framework (like one built with [macadmins/python](https://github.com/macadmins/python) or [relocatable-python](https://github.com/gregneagle/relocatable-python)) using a requirements file.
 
-### Managed Python
-
-Docklib is included in the "recommended" flavor of the [macadmins/python](https://github.com/macadmins/python) release package. Installing this package and using `#!/usr/local/managed_python3` for your docklib script shebang may be the most self-contained and future-proof way to deploy docklib.
-
 ### Manual
 
-Another method of using docklib is to simply place the docklib.py file in the same location as the Python script(s) you use to manipulate the macOS dock. Some examples of such scripts are included below.
+Another method of using docklib is to simply place the docklib.py file in the same location as the Python script(s) you use to manipulate the macOS dock. Examples of such scripts are included below.
 
 ## Examples
 
