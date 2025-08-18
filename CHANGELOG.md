@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file. This projec
     - Minimum supported macOS version is now 13.0.
     - Minimum supported Python version is now 3.9.
     - _Docklib may still work on older versions of macOS and Python, but no testing will be performed to verify this._
+- Updated `save()` method to use [modern `launchctl` commands](https://babodee.wordpress.com/2016/04/09/launchctl-2-0-syntax/), and created a class for managing the Dock agent using these commands.
 - Moved from legacy setup.py to pyproject.toml.
 - Adjusted GitHub Actions automated testing to run on a matrix of supported Python and macOS versions.
 - Significantly rewrote unit tests, mocking dock operations and removing sequential run dependency.

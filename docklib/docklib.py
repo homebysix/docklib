@@ -6,8 +6,10 @@ See project details on GitHub: https://github.com/homebysix/docklib
 """
 
 import os
+import pwd
 import subprocess
 from urllib.parse import unquote, urlparse
+from typing import Optional
 
 # pylint: disable=E0611
 from Foundation import (
@@ -24,6 +26,76 @@ class DockError(Exception):
     """Basic exception."""
 
     pass
+
+
+class LaunchAgentError(Exception):
+    """Exception raised for LaunchAgent operations."""
+
+    pass
+
+
+class LaunchAgentManager:
+    """Class to handle macOS LaunchAgent operations using modern launchctl commands."""
+
+    def __init__(self, service_target: Optional[str] = None) -> None:
+        """Initialize the LaunchAgentManager."""
+
+        if service_target is None:
+            # Get current user ID for GUI domain
+            uid = pwd.getpwuid(os.getuid()).pw_uid
+            self.service_target = f"gui/{uid}"
+        else:
+            self.service_target = service_target
+
+    def bootstrap(self, plist_path: str) -> bool:
+        """Load a LaunchAgent using bootstrap command."""
+
+        if not os.path.exists(plist_path):
+            raise LaunchAgentError(f"LaunchAgent plist not found: {plist_path}")
+
+        cmd = ["/bin/launchctl", "bootstrap", self.service_target, plist_path]
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                return True
+            raise LaunchAgentError(
+                f"Failed to bootstrap {plist_path}: {result.stderr.strip()}"
+            )
+        except subprocess.SubprocessError as e:
+            raise LaunchAgentError(f"Subprocess error during bootstrap: {e}") from e
+
+    def bootout(self, service_name: str) -> bool:
+        """Unload a LaunchAgent using bootout command."""
+
+        cmd = ["/bin/launchctl", "bootout", f"{self.service_target}/{service_name}"]
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                return True
+            # Service might not be loaded, which is not necessarily an error
+            if (
+                "No such process" in result.stderr
+                or "Could not find service" in result.stderr
+            ):
+                return True
+            raise LaunchAgentError(
+                f"Failed to bootout {service_name}: {result.stderr.strip()}"
+            )
+        except subprocess.SubprocessError as e:
+            raise LaunchAgentError(f"Subprocess error during bootout: {e}") from e
+
+    def is_loaded(self, service_name: str) -> bool:
+        """Check if a service is currently loaded."""
+
+        cmd = ["/bin/launchctl", "print", f"{self.service_target}/{service_name}"]
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            return result.returncode == 0
+        except subprocess.SubprocessError:
+            return False
 
 
 class Dock:
@@ -83,8 +155,12 @@ class Dock:
 
     def save(self) -> None:
         """Saves our (modified) Dock preferences."""
+
+        # Create LaunchAgent manager for current user's GUI domain
+        agent = LaunchAgentManager()
+
         # unload Dock launchd job so we can make our changes unmolested
-        subprocess.call(["/bin/launchctl", "unload", self._DOCK_LAUNCHAGENT_FILE])
+        agent.bootout(self._DOCK_LAUNCHAGENT_ID)
 
         for key in self._SECTIONS:
             try:
@@ -107,8 +183,7 @@ class Dock:
             raise DockError
 
         # restart the Dock
-        subprocess.call(["/bin/launchctl", "load", self._DOCK_LAUNCHAGENT_FILE])
-        subprocess.call(["/bin/launchctl", "start", self._DOCK_LAUNCHAGENT_ID])
+        agent.bootstrap(self._DOCK_LAUNCHAGENT_FILE)
 
     def findExistingEntry(
         self, match_str: str, match_on: str = "any", section: str = "persistent-apps"
