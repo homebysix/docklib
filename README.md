@@ -178,6 +178,44 @@ dock.items["persistent-apps"] = [
 dock.save()
 ```
 
+## Detailed logging
+
+During script writing or troubleshooting it may be useful to show informational or debug messages. You can adjust the logging level by adjusting the `logging` settings in your script:
+
+### Show success and informational messages
+
+```python
+import logging
+from docklib import Dock
+
+# Enable INFO level logging to see successful operations
+logging.getLogger("docklib").setLevel(logging.INFO)
+
+dock = Dock()
+# Your dock operations here...
+dock.save()  # Will now show "Successfully saved Dock preferences and restarted Dock"
+```
+
+### Show detailed debug information
+
+```python
+import logging
+from docklib import Dock
+
+# Enable DEBUG level logging for detailed troubleshooting
+logging.getLogger("docklib").setLevel(logging.DEBUG)
+
+dock = Dock()
+dock.findExistingEntry("Safari")  # Will show detailed search operations
+dock.save()  # Will show subprocess command details
+```
+
+### Available logging levels
+
+- **WARNING** (default): Only shows warnings and errors
+- **INFO**: Shows successful operations and informational messages
+- **DEBUG**: Shows detailed subprocess execution and search operation details
+
 ## More information
 
 For more examples and tips for creating your docklib script, see my guides on:

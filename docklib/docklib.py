@@ -5,6 +5,7 @@
 See project details on GitHub: https://github.com/homebysix/docklib
 """
 
+import logging
 import os
 import pwd
 import subprocess
@@ -20,6 +21,12 @@ from Foundation import (
 )
 
 # pylint: enable=E0611
+
+# Configure logging
+logging.basicConfig(
+    level=logging.WARNING, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class DockError(Exception):
@@ -54,10 +61,17 @@ class LaunchAgentManager:
             raise LaunchAgentError(f"LaunchAgent plist not found: {plist_path}")
 
         cmd = ["/bin/launchctl", "bootstrap", self.service_target, plist_path]
+        logger.debug(f"Executing bootstrap command: {' '.join(cmd)}")
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            logger.debug(
+                f"Bootstrap command result: returncode={result.returncode}, "
+                f"stdout='{result.stdout.strip()}', stderr='{result.stderr.strip()}'"
+            )
+
             if result.returncode == 0:
+                logger.info(f"Successfully bootstrapped LaunchAgent: {plist_path}")
                 return True
             raise LaunchAgentError(
                 f"Failed to bootstrap {plist_path}: {result.stderr.strip()}"
@@ -69,16 +83,26 @@ class LaunchAgentManager:
         """Unload a LaunchAgent using bootout command."""
 
         cmd = ["/bin/launchctl", "bootout", f"{self.service_target}/{service_name}"]
+        logger.debug(f"Executing bootout command: {' '.join(cmd)}")
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            logger.debug(
+                f"Bootout command result: returncode={result.returncode}, "
+                f"stdout='{result.stdout.strip()}', stderr='{result.stderr.strip()}'"
+            )
+
             if result.returncode == 0:
+                logger.info(f"Successfully booted out LaunchAgent: {service_name}")
                 return True
             # Service might not be loaded, which is not necessarily an error
             if (
                 "No such process" in result.stderr
                 or "Could not find service" in result.stderr
             ):
+                logger.info(
+                    f"LaunchAgent {service_name} was not loaded (bootout successful)"
+                )
                 return True
             raise LaunchAgentError(
                 f"Failed to bootout {service_name}: {result.stderr.strip()}"
@@ -90,11 +114,21 @@ class LaunchAgentManager:
         """Check if a service is currently loaded."""
 
         cmd = ["/bin/launchctl", "print", f"{self.service_target}/{service_name}"]
+        logger.debug(f"Executing is_loaded check command: {' '.join(cmd)}")
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, check=False)
-            return result.returncode == 0
+            logger.debug(
+                f"Is_loaded command result: returncode={result.returncode}, "
+                f"stdout='{result.stdout.strip()}', stderr='{result.stderr.strip()}'"
+            )
+            is_loaded = result.returncode == 0
+            logger.debug(f"LaunchAgent {service_name} loaded status: {is_loaded}")
+            return is_loaded
         except subprocess.SubprocessError:
+            logger.debug(
+                f"Subprocess error checking if {service_name} is loaded, returning False"
+            )
             return False
 
 
@@ -203,8 +237,14 @@ class Dock:
                 (e.g. Safari)
             any: Try all the criteria above in order, and return the first result.
         """
+        logger.debug(
+            f"Searching for Dock entry: match_str='{match_str}', "
+            f"match_on='{match_on}', section='{section}'"
+        )
+
         section_items = self.items[section]
         if section_items:
+            logger.debug(f"Found {len(section_items)} items in {section} section")
             # Determine the order of attributes to match on.
             if match_on == "any":
                 match_ons = ["label", "path", "name_ext", "name_noext"]
@@ -214,6 +254,7 @@ class Dock:
             # Iterate through match criteria (ensures a full scan of the Dock
             # for each criterion, if matching on "any").
             for m in match_ons:
+                logger.debug(f"Searching using match criterion: {m}")
                 # Iterate through items in section
                 for index, item in enumerate(section_items):
                     url = item["tile-data"].get("file-data", {}).get("_CFURLString", "")
@@ -225,14 +266,30 @@ class Dock:
                         # Most dock items use "file-label", but URLs use "label"
                         for label_key in ("file-label", "label"):
                             if item["tile-data"].get(label_key) == match_str:
+                                logger.debug(
+                                    f"Found match at index {index} using {m} criterion "
+                                    f"(label_key='{label_key}')"
+                                )
                                 return index
                     elif m == "path" and path == match_str:
+                        logger.debug(
+                            f"Found match at index {index} using {m} criterion"
+                        )
                         return index
                     elif m == "name_ext" and name_ext == match_str:
+                        logger.debug(
+                            f"Found match at index {index} using {m} criterion"
+                        )
                         return index
                     elif m == "name_noext" and name_noext == match_str:
+                        logger.debug(
+                            f"Found match at index {index} using {m} criterion"
+                        )
                         return index
+        else:
+            logger.debug(f"No items found in {section} section")
 
+        logger.debug(f"No match found for '{match_str}' in {section} section")
         return -1
 
     def findExistingLabel(
@@ -244,13 +301,22 @@ class Dock:
     def findExistingURL(self, match_url: str) -> int:
         """Returns index of item with URL matching match_url or -1 if not
         found."""
+        logger.debug(f"Searching for Dock URL entry: match_url='{match_url}'")
+
         section_items = self.items["persistent-others"]
         if section_items:
+            logger.debug(
+                f"Found {len(section_items)} items in persistent-others section"
+            )
             for index, item in enumerate(section_items):
                 if item["tile-data"].get("url"):
                     if item["tile-data"]["url"]["_CFURLString"] == match_url:
+                        logger.debug(f"Found URL match at index {index}")
                         return index
+        else:
+            logger.debug("No items found in persistent-others section")
 
+        logger.debug(f"No URL match found for '{match_url}'")
         return -1
 
     def removeDockEntry(
@@ -263,18 +329,32 @@ class Dock:
             sections = [section]
         else:
             sections = self._SECTIONS
+
+        removed_count = 0
         for sect in sections:
             found_index = self.findExistingEntry(
                 match_str, match_on=match_on, section=sect
             )
             if found_index > -1:
                 del self.items[sect][found_index]
+                removed_count += 1
+                logger.info(
+                    f"Removed Dock entry '{match_str}' from {sect} section at index {found_index}"
+                )
+
+        if removed_count == 0:
+            logger.info(f"No Dock entry found to remove for '{match_str}'")
 
     def removeDockURLEntry(self, url: str) -> None:
         """Removes a Dock entry with matching url, if any."""
         found_index = self.findExistingURL(url)
         if found_index > -1:
             del self.items["persistent-others"][found_index]
+            logger.info(
+                f"Removed Dock URL entry '{url}' from persistent-others section at index {found_index}"
+            )
+        else:
+            logger.info(f"No Dock URL entry found to remove for '{url}'")
 
     def replaceDockEntry(
         self,
@@ -315,6 +395,11 @@ class Dock:
         )
         if found_index > -1:
             self.items[section][found_index] = newitem
+            logger.info(
+                f"Replaced Dock entry '{match_str}' with '{newpath}' in {section} section at index {found_index}"
+            )
+        else:
+            logger.info(f"No existing Dock entry found to replace for '{match_str}'")
 
     def makeDockAppSpacer(self, tile_type: str = "spacer-tile") -> dict:
         """Makes an empty space in the Dock."""
